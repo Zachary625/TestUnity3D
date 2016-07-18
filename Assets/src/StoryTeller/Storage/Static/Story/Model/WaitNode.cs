@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AssemblyCSharp.StoryTeller.Serialization.Static.Story.Model
+namespace AssemblyCSharp.StoryTeller.Storage.Static.Story.Model
 {
 	public class WaitNode: BaseStoryNode
 	{

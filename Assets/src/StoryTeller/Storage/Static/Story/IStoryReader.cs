@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AssemblyCSharp.StoryTeller.Serialization.Static.Story
+namespace AssemblyCSharp.StoryTeller.Storage.Static.Story
 {
 	public interface IStoryReader
 	{
