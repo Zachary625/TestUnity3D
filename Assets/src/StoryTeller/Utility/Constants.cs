@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace AssemblyCSharp.StoryTeller.Utility
+namespace Assets.src.StoryTeller.Utility
 {
     public enum NodeType
     {

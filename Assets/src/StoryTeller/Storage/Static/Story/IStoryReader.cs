@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace AssemblyCSharp.StoryTeller.Storage.Static.Story
+namespace Assets.src.StoryTeller.Storage.Static.Story
 {
 	public interface IStoryReader
 	{
-		Model.Story readStory(string path);
+		StoryTeller.Model.Static.Story.Story readStory(string path);
 	}
 }
 

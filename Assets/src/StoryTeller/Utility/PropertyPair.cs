@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AssemblyCSharp.StoryTeller.Utility
+namespace Assets.src.StoryTeller.Utility
 {
     public enum PropertyType
     {

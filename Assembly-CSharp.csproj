@@ -45,14 +45,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\src\App\AppManager.cs" />
+     <Compile Include="Assets\src\StoryTeller\GUI\Dialogs\BaseDialog.cs" />
+     <Compile Include="Assets\src\StoryTeller\GUI\GUIManager.cs" />
+     <Compile Include="Assets\src\StoryTeller\GUI\Layers\BaseLayer.cs" />
+     <Compile Include="Assets\src\StoryTeller\GUI\Panels\BasePanel.cs" />
+     <Compile Include="Assets\src\StoryTeller\Model\Dynamic\Story\Story.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\BaseStoryNode.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\Character.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\NarrativeNode.cs" />
+     <Compile Include="Assets\src\StoryTeller\Model\Static\Story\Property.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\SelectiveNode.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\Story.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\WaitNode.cs" />
-     <Compile Include="Assets\src\StoryTeller\Serialization\Static\Story\IStoryReader.cs" />
-     <Compile Include="Assets\src\StoryTeller\Serialization\Static\Story\JSONStoryReader.cs" />
+     <Compile Include="Assets\src\StoryTeller\Network\NetworkManager.cs" />
+     <Compile Include="Assets\src\StoryTeller\Storage\Dynamic\Story\StoryProgressManager.cs" />
+     <Compile Include="Assets\src\StoryTeller\Storage\Dynamic\User\UserProfileManager.cs" />
+     <Compile Include="Assets\src\StoryTeller\Storage\Static\Story\IStoryReader.cs" />
+     <Compile Include="Assets\src\StoryTeller\Storage\Static\Story\JSONStoryReader.cs" />
      <Compile Include="Assets\src\StoryTeller\Utility\Constants.cs" />
      <Compile Include="Assets\src\StoryTeller\Utility\PropertyPair.cs" />
      <Compile Include="Assets\src\UIEventHandler.cs" />

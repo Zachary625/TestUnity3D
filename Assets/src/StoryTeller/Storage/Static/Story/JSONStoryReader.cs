@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AssemblyCSharp.StoryTeller.Storage.Static.Story
+namespace Assets.src.StoryTeller.Storage.Static.Story
 {
 	public class JSONStoryReader: IStoryReader
 	{
@@ -8,7 +8,7 @@ namespace AssemblyCSharp.StoryTeller.Storage.Static.Story
 		{
 		}
 
-        public Model.Story readStory(string path)
+		public StoryTeller.Model.Static.Story.Story readStory(string path)
         {
             throw new NotImplementedException();
         }
