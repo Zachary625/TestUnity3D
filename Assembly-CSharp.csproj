@@ -46,10 +46,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\src\App\AppManager.cs" />
-     <Compile Include="Assets\src\StoryTeller\GUI\Dialogs\BaseDialog.cs" />
-     <Compile Include="Assets\src\StoryTeller\GUI\GUIManager.cs" />
-     <Compile Include="Assets\src\StoryTeller\GUI\Layers\BaseLayer.cs" />
-     <Compile Include="Assets\src\StoryTeller\GUI\Panels\BasePanel.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Dynamic\Story\Story.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\BaseStoryNode.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\Character.cs" />
@@ -65,6 +61,10 @@
      <Compile Include="Assets\src\StoryTeller\Storage\Static\Story\JSONStoryReader.cs" />
      <Compile Include="Assets\src\StoryTeller\Utility\Constants.cs" />
      <Compile Include="Assets\src\StoryTeller\Utility\PropertyPair.cs" />
+     <Compile Include="Assets\src\StoryTeller\View\Dialogs\BaseDialog.cs" />
+     <Compile Include="Assets\src\StoryTeller\View\Layers\BaseLayer.cs" />
+     <Compile Include="Assets\src\StoryTeller\View\Panels\BasePanel.cs" />
+     <Compile Include="Assets\src\StoryTeller\View\ViewManager.cs" />
      <Compile Include="Assets\src\UIEventHandler.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

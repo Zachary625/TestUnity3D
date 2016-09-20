@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.src.StoryTeller.GUI
 {
-    public class GUIManager
+    public class ViewManager
     {
     }
 }
