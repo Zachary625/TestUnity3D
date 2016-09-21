@@ -1,12 +1,6 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/StoryTeller/Storage/Static/Story/JSONStoryReader.cs">
-    <Files>
-      <File FileName="Assets/src/StoryTeller/Storage/Static/Story/Model/Story.cs" Line="15" Column="64" />
-      <File FileName="Assets/src/UIEventHandler.cs" Line="43" Column="24" />
-      <File FileName="Assets/src/StoryTeller/Storage/Static/Story/JSONStoryReader.cs" Line="10" Column="3" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
