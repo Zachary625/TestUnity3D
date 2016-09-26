@@ -45,10 +45,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\src\App\AppDebug.cs" />
      <Compile Include="Assets\src\App\AppManager.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigListView\BigListView.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigPageView\BigPageView.cs" />
-     <Compile Include="Assets\src\GUI\Widgets\ListView\ListView.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\ListView\ListViewTest.cs" />
      <Compile Include="Assets\src\GUI\Widgets\PageView\PageView.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Dynamic\Story\Story.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\BaseStoryNode.cs" />
