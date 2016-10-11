@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Assets.src.GUI.PageView
 {
-	public class PageView : MonoBehaviour {
+	public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
 		private enum _Direction
 		{
 			None,
@@ -19,8 +19,59 @@ namespace Assets.src.GUI.PageView
 
 		public float scrollDuration = 0.2f;
 
+		public int Pages {
+			get { 
+				return this._pageContents.Count;
+			}
+		}
+
 		private GameObject _contentPanel;
 		private List<GameObject> _pageContents = new List<GameObject>();
+
+		private bool _dragging = false;
+		private bool _scrolling = false;
+		private float _beginPosition = 0;
+		private float _endPosition = 0;
+		private float _scrollTime = 0;
+		private float _scrollAcceleration = 0;
+
+		private float _normalizedPosition {
+			get { 
+				float result = 0;
+				ScrollRect scrollRect = this.GetComponent<ScrollRect> ();
+
+				switch (this._direction) {
+				case _Direction.Horizontal:
+					{
+						result = scrollRect.horizontalNormalizedPosition;
+						break;
+					}
+				case _Direction.Vertical:
+					{
+						result = scrollRect.verticalNormalizedPosition;
+						break;
+					}
+				}
+				return result;
+			}
+			set { 
+				ScrollRect scrollRect = this.GetComponent<ScrollRect> ();
+
+				switch (this._direction) {
+				case _Direction.Horizontal:
+					{
+						scrollRect.horizontalNormalizedPosition = value;
+						break;
+					}
+				case _Direction.Vertical:
+					{
+						scrollRect.verticalNormalizedPosition = value;
+						break;
+					}
+				}
+			}
+		}
+
 
 		// Use this for initialization
 		void Start () {
@@ -38,7 +89,15 @@ namespace Assets.src.GUI.PageView
 
 		// Update is called once per frame
 		void Update () {
-
+			if (!this._dragging && this._scrolling) {
+				this._scrollTime += Time.deltaTime;
+				if (this._scrollTime >= this.scrollDuration) {
+					this._normalizedPosition = this._endPosition;
+					this._endScroll ();
+				} else {
+					this._normalizedPosition = (float)(this._beginPosition + 0.5 * this._scrollAcceleration * this._scrollTime * this._scrollTime);
+				}
+			}
 		}
 
 		private bool _isValidPageContent(GameObject content) {
@@ -70,9 +129,9 @@ namespace Assets.src.GUI.PageView
 			this._updatePages ();
 		}
 
-		public GameObject getPage(int index) {
+		public GameObject getPage(int pageIndex) {
 			try {
-				return this._pageContents[index];				
+				return this._pageContents[pageIndex];				
 			}
 			catch {
 				return null;
@@ -145,12 +204,77 @@ namespace Assets.src.GUI.PageView
 
 		}
 
-		public void jumpToPage(int index) {
-			
+		private float _pageIndexToNormalizedPosition(int pageIndex) {
+			return (float)(pageIndex * 1.0 / (this._pageContents.Count - 1));
 		}
 
-		public void scrollToPage(int index) {
-			
+		private int _normalizedPositionToPageIndex(float position) {
+			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this._pageContents.Count - 1)), 0, this._pageContents.Count - 1);
 		}
+
+		public void jumpToPage(int pageIndex) {
+			if (this._pageContents.Count <= 1) {
+				return;
+			}
+
+			if (this._dragging) {
+				return;
+			}
+
+			this._endScroll ();
+			this._normalizedPosition = this._pageIndexToNormalizedPosition(pageIndex);
+		}
+
+		public void scrollToPage(int pageIndex) {
+			if (this._pageContents.Count <= 1) {
+				return;
+			}
+
+			if (this._dragging) {
+				return;
+			}
+
+			this._beginScroll (pageIndex);
+		}
+
+		public void OnBeginDrag(PointerEventData data) {
+			this._dragging = true;
+			this._endScroll ();
+		}
+
+		public void OnEndDrag(PointerEventData data) {
+			this._dragging = false;
+
+			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
+		}
+
+		private void _beginScroll(int pageIndex) {
+			if (this._pageContents.Count <= 1) {
+				return;
+			}
+
+			this._endScroll ();
+
+			this._beginPosition = this._normalizedPosition;
+			this._endPosition = this._pageIndexToNormalizedPosition (pageIndex);
+
+			this._scrollAcceleration = 2 * (this._endPosition - this._beginPosition) / this.scrollDuration / this.scrollDuration;
+
+			this._scrollTime = 0;
+			this._scrolling = true;
+		}
+
+		private void _endScroll() {
+			if (this._scrolling) {
+				this._scrolling = false;
+				this._scrollTime = 0;
+
+				this._beginPosition = 0;
+				this._endPosition = 0;
+
+				this._scrollAcceleration = 0;
+			}
+		}
+
 	}
 }
