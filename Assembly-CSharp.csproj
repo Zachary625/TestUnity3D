@@ -51,6 +51,8 @@
      <Compile Include="Assets\src\GUI\Widgets\BigPageView\BigPageView.cs" />
      <Compile Include="Assets\src\GUI\Widgets\ListView\ListViewTest.cs" />
      <Compile Include="Assets\src\GUI\Widgets\PageView\PageView.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\PageView\PageViewPage.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\PageView\PageViewTest.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Dynamic\Story\Story.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\BaseStoryNode.cs" />
      <Compile Include="Assets\src\StoryTeller\Model\Static\Story\Character.cs" />
