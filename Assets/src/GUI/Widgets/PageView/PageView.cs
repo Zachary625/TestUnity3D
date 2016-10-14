@@ -34,6 +34,7 @@ namespace Assets.src.GUI.PageView
 		private float _endPosition = 0;
 		private float _scrollTime = 0;
 		private float _scrollAcceleration = 0;
+		private Coroutine _scrollCoroutine = null;
 
 		private float _normalizedPosition {
 			get { 
@@ -89,15 +90,6 @@ namespace Assets.src.GUI.PageView
 
 		// Update is called once per frame
 		void Update () {
-			if (!this._dragging && this._scrolling) {
-				this._scrollTime += Time.deltaTime;
-				if (this._scrollTime >= this.scrollDuration) {
-					this._normalizedPosition = this._endPosition;
-					this._endScroll ();
-				} else {
-					this._normalizedPosition = (float)(this._beginPosition + 0.5 * this._scrollAcceleration * this._scrollTime * this._scrollTime);
-				}
-			}
 		}
 
 		private bool _isValidPageContent(GameObject content) {
@@ -262,9 +254,15 @@ namespace Assets.src.GUI.PageView
 
 			this._scrollTime = 0;
 			this._scrolling = true;
+
+			this._scrollCoroutine = StartCoroutine (this._scroll());
 		}
 
 		private void _endScroll() {
+			if (this._scrollCoroutine != null) {
+				StopCoroutine (this._scrollCoroutine);
+				this._scrollCoroutine = null;
+			}
 			if (this._scrolling) {
 				this._scrolling = false;
 				this._scrollTime = 0;
@@ -275,6 +273,21 @@ namespace Assets.src.GUI.PageView
 				this._scrollAcceleration = 0;
 			}
 		}
+
+		private IEnumerator _scroll() {
+			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
+			while (!this._dragging && this._scrolling) {
+				this._scrollTime += Time.deltaTime;
+				if (this._scrollTime >= this.scrollDuration) {
+					this._normalizedPosition = this._endPosition;
+					this._endScroll ();
+				} else {
+					this._normalizedPosition = (float)(this._beginPosition + 0.5 * this._scrollAcceleration * this._scrollTime * this._scrollTime);
+					yield return null;
+				}
+			}
+		}
+
 
 	}
 }

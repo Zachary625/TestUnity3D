@@ -22,7 +22,7 @@ namespace Assets.src.GUI.ListView
 		void Start () {
 			string[] fontNames = Font.GetOSInstalledFontNames ();
 			foreach (string fontName in fontNames) {
-				Debug.Log (" @ ListViewTest: Font.GetOSInstalledFontNames(): " + fontName);
+//				Debug.Log (" @ ListViewTest: Font.GetOSInstalledFontNames(): " + fontName);
 			}
 
 			bool hasVertical = this.GetComponent<VerticalLayoutGroup> () != null;
