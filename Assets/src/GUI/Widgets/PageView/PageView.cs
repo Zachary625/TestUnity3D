@@ -25,12 +25,12 @@ namespace Assets.src.GUI.PageView
 		}
 
 		public delegate void PageIndexChangeHandler(GameObject pageView, PageViewEventArgs args);
-		public delegate void PageScrollingHandler(GameObject PageView, PageViewEventArgs args);
-		public delegate void PageScrolledHandler(GameObject PageView, PageViewEventArgs args);
+		public delegate void PageScrollStartHandler(GameObject PageView, PageViewEventArgs args);
+		public delegate void PageScrollStopHandler(GameObject PageView, PageViewEventArgs args);
 
 		public PageIndexChangeHandler pageIndexChangeHandler;
-		public PageScrollingHandler pageScrollingHandler;
-		public PageScrolledHandler pageScrolledHandler;
+		public PageScrollStartHandler pageScrollStartHandler;
+		public PageScrollStopHandler pageScrollStopHandler;
 
 		private _Direction _direction = _Direction.None;
 
@@ -212,8 +212,9 @@ namespace Assets.src.GUI.PageView
 				pageComponent.pageIndex = pageIndex;
 				pageComponent.content = this._pageContents[pageIndex];
 			}
-
-			this.jumpToPage (this._pageIndex);
+			if (this._pageContents.Count > 0 && this._pageIndex >= this._pageContents.Count) {
+				this.jumpToPage (this._pageContents.Count - 1);
+			}
 		}
 
 		private GameObject _createPage() {
@@ -247,7 +248,7 @@ namespace Assets.src.GUI.PageView
 		}
 
 		public void jumpToPage(int pageIndex) {
-			if (this._pageContents.Count <= 1) {
+			if (this._pageContents.Count < 1) {
 				return;
 			}
 
@@ -307,8 +308,8 @@ namespace Assets.src.GUI.PageView
 			this._scrollPageIndex = pageIndex;
 
 			if (this._pageIndex != this._scrollPageIndex) {
-				if (this.pageScrollingHandler != null) {
-					this.pageScrollingHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, this._scrollPageIndex));
+				if (this.pageScrollStartHandler != null) {
+					this.pageScrollStartHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, this._scrollPageIndex));
 				}
 			}
 
@@ -343,8 +344,8 @@ namespace Assets.src.GUI.PageView
 				this._scrollAcceleration = 0;
 
 				if (prevPageIndex != this._pageIndex) {
-					if (this.pageScrolledHandler != null) {
-						this.pageScrolledHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
+					if (this.pageScrollStopHandler != null) {
+						this.pageScrollStopHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
 					}
 					if (this.pageIndexChangeHandler != null) {
 						this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));

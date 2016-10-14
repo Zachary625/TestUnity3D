@@ -32,13 +32,11 @@ namespace Assets.src.GUI.PageView {
 			pageView.pageIndexChangeHandler += new PageView.PageIndexChangeHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
 				Debug.Log(" @ PageViewText.PageIndexChangeHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
 			});
-
-			pageView.pageScrollingHandler += new PageView.PageScrollingHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
-				Debug.Log(" @ PageViewText.PageScrollingHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
+			pageView.pageScrollStartHandler += new PageView.PageScrollStartHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
+				Debug.Log(" @ PageViewText.PageScrollStartHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
 			});
-
-			pageView.pageScrolledHandler += new PageView.PageScrolledHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
-				Debug.Log(" @ PageViewText.PageScrolledHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
+			pageView.pageScrollStopHandler += new PageView.PageScrollStopHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
+				Debug.Log(" @ PageViewText.PageScrollStopHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
 			});
 
 		}
