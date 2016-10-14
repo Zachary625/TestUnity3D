@@ -13,11 +13,36 @@ namespace Assets.src.GUI.PageView
 			Vertical,
 			Horizontal,
 		}
+
+		public struct PageViewEventArgs {
+			public int PrevPageIndex;
+			public int NextPageIndex;
+
+			public PageViewEventArgs(int prevPageIndex, int nextPageIndex) {
+				this.PrevPageIndex = prevPageIndex;
+				this.NextPageIndex = nextPageIndex;
+			}
+		}
+
+		public delegate void PageIndexChangeHandler(GameObject pageView, PageViewEventArgs args);
+		public delegate void PageScrollingHandler(GameObject PageView, PageViewEventArgs args);
+		public delegate void PageScrolledHandler(GameObject PageView, PageViewEventArgs args);
+
+		public PageIndexChangeHandler pageIndexChangeHandler;
+		public PageScrollingHandler pageScrollingHandler;
+		public PageScrolledHandler pageScrolledHandler;
+
 		private _Direction _direction = _Direction.None;
 
 		public GameObject pagePrefab;
 
 		public float scrollDuration = 0.2f;
+
+		public int PageIndex {
+			get { 
+				return this._pageIndex;	
+			}
+		}
 
 		public int Pages {
 			get { 
@@ -25,8 +50,23 @@ namespace Assets.src.GUI.PageView
 			}
 		}
 
+		public bool Dragging {
+			get {
+				return this._dragging;
+			}
+		}
+
+		public bool Scrolling {
+			get { 
+				return this._scrolling;
+			}
+		}
+
 		private GameObject _contentPanel;
 		private List<GameObject> _pageContents = new List<GameObject>();
+
+		private int _pageIndex = 0;
+		private int _scrollPageIndex = -1;
 
 		private bool _dragging = false;
 		private bool _scrolling = false;
@@ -172,6 +212,8 @@ namespace Assets.src.GUI.PageView
 				pageComponent.pageIndex = pageIndex;
 				pageComponent.content = this._pageContents[pageIndex];
 			}
+
+			this.jumpToPage (this._pageIndex);
 		}
 
 		private GameObject _createPage() {
@@ -214,7 +256,18 @@ namespace Assets.src.GUI.PageView
 			}
 
 			this._endScroll ();
-			this._normalizedPosition = this._pageIndexToNormalizedPosition(pageIndex);
+
+			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
+
+			int prevPageIndex = this._pageIndex;
+			this._pageIndex = pageIndex;
+			this._normalizedPosition = this._pageIndexToNormalizedPosition (pageIndex);
+
+			if (prevPageIndex != this._pageIndex) {
+				if (this.pageIndexChangeHandler != null) {
+					this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
+				}
+			}
 		}
 
 		public void scrollToPage(int pageIndex) {
@@ -230,22 +283,34 @@ namespace Assets.src.GUI.PageView
 		}
 
 		public void OnBeginDrag(PointerEventData data) {
+//			base.OnBeginDrag (data);
+
 			this._dragging = true;
 			this._endScroll ();
 		}
 
 		public void OnEndDrag(PointerEventData data) {
-			this._dragging = false;
+//			base.OnEndDrag (data);
 
+			this._dragging = false;
 			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
 		}
-
+			
 		private void _beginScroll(int pageIndex) {
 			if (this._pageContents.Count <= 1) {
 				return;
 			}
 
 			this._endScroll ();
+
+			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
+			this._scrollPageIndex = pageIndex;
+
+			if (this._pageIndex != this._scrollPageIndex) {
+				if (this.pageScrollingHandler != null) {
+					this.pageScrollingHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, this._scrollPageIndex));
+				}
+			}
 
 			this._beginPosition = this._normalizedPosition;
 			this._endPosition = this._pageIndexToNormalizedPosition (pageIndex);
@@ -254,6 +319,7 @@ namespace Assets.src.GUI.PageView
 
 			this._scrollTime = 0;
 			this._scrolling = true;
+
 
 			this._scrollCoroutine = StartCoroutine (this._scroll());
 		}
@@ -267,15 +333,28 @@ namespace Assets.src.GUI.PageView
 				this._scrolling = false;
 				this._scrollTime = 0;
 
+				int prevPageIndex = this._pageIndex; 
+				this._pageIndex = this._scrollPageIndex;
+				this._scrollPageIndex = -1;
+
 				this._beginPosition = 0;
 				this._endPosition = 0;
 
 				this._scrollAcceleration = 0;
+
+				if (prevPageIndex != this._pageIndex) {
+					if (this.pageScrolledHandler != null) {
+						this.pageScrolledHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
+					}
+					if (this.pageIndexChangeHandler != null) {
+						this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
+					}
+				}
 			}
 		}
 
 		private IEnumerator _scroll() {
-			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
+//			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
 			while (!this._dragging && this._scrolling) {
 				this._scrollTime += Time.deltaTime;
 				if (this._scrollTime >= this.scrollDuration) {
@@ -287,7 +366,6 @@ namespace Assets.src.GUI.PageView
 				}
 			}
 		}
-
 
 	}
 }

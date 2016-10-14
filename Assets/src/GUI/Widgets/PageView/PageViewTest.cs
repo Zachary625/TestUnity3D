@@ -24,15 +24,23 @@ namespace Assets.src.GUI.PageView {
 					contentRT.offsetMin = Vector2.zero;
 					contentRT.offsetMax = Vector2.zero;
 
-					//					contentRT.pivot = new Vector2(0.5f, 0.5f);
-
-//					contentRT.position = Vector3.zero;
-//					contentRT.sizeDelta = Vector2.zero;
-
 					contentImage.color = (pageIndex % 2 == 0) ? Color.red : Color.yellow;
 
 				}
 			}
+
+			pageView.pageIndexChangeHandler += new PageView.PageIndexChangeHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
+				Debug.Log(" @ PageViewText.PageIndexChangeHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
+			});
+
+			pageView.pageScrollingHandler += new PageView.PageScrollingHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
+				Debug.Log(" @ PageViewText.PageScrollingHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
+			});
+
+			pageView.pageScrolledHandler += new PageView.PageScrolledHandler (delegate(GameObject sender, PageView.PageViewEventArgs args) {
+				Debug.Log(" @ PageViewText.PageScrolledHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
+			});
+
 		}
 
 		private GameObject _createPageContent() {
