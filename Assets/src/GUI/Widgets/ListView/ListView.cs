@@ -170,11 +170,37 @@ namespace Assets.src.GUI.ListView
 		private GameObject _createItemContainer() {
 			GameObject itemContainer = Instantiate (this.itemContainerPrefab);
 			ListViewItemContainer itemContainerComponent = itemContainer.GetComponent<ListViewItemContainer> ();
+//			ContentSizeFitter contentSizeFitter = itemContainer.AddComponent<ContentSizeFitter> ();
 
 			itemContainer.transform.SetParent (this._contentPanel.transform);
 
 			itemContainerComponent.listView = this.gameObject;
 
+			switch (this.direction) {
+			case Direction.Vertical:
+				{
+					VerticalLayoutGroup verticalLayoutGroup = itemContainer.AddComponent<VerticalLayoutGroup> ();
+					verticalLayoutGroup.childAlignment = TextAnchor.UpperCenter;
+					verticalLayoutGroup.childForceExpandWidth = true;
+					verticalLayoutGroup.childForceExpandHeight = false;
+
+//					contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+//					contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+					break;
+				}
+			case Direction.Horizontal:
+				{
+					HorizontalLayoutGroup horizontalLayoutGroup = itemContainer.AddComponent<HorizontalLayoutGroup> ();
+					horizontalLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
+					horizontalLayoutGroup.childForceExpandWidth = false;
+					horizontalLayoutGroup.childForceExpandHeight = true;
+
+//					contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+//					contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+					break;
+				}
+			}
+				
 			return itemContainer;
 		}
 

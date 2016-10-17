@@ -59,19 +59,26 @@ namespace Assets.src.GUI.ListView
 
 		public void CalculateLayoutInputHorizontal() {
 			ListView listViewComponent = listView.GetComponent<ListView> ();
-			if (listViewComponent != null && listViewComponent.direction == ListView.Direction.Horizontal) {
-				this._width = listView.GetComponent<RectTransform> ().rect.size.x;
+			if (listViewComponent != null && listViewComponent.direction == ListView.Direction.Vertical) {
+				this._width = this.transform.parent.GetComponent<RectTransform> ().rect.size.x;
 			} else {
-				this._width = 0;
+//				RectTransform contentRectTransform = this.content.GetComponent<RectTransform> ();
+//				if (contentRectTransform != null) {
+//					this._width = contentRectTransform.rect.width;
+//				}
 			}
 		}
 
 		public void CalculateLayoutInputVertical() {
 			ListView listViewComponent = listView.GetComponent<ListView> ();
-			if (listViewComponent != null && listViewComponent.direction == ListView.Direction.Vertical) {
-				this._height = listView.GetComponent<RectTransform>().rect.size.y;
+			if (listViewComponent != null && listViewComponent.direction == ListView.Direction.Horizontal) {
+				this._height = this.transform.parent.GetComponent<RectTransform>().rect.size.y;
 			} else {
-				this._height = 0;
+//				RectTransform contentRectTransform = this.content.GetComponent<RectTransform> ();
+//				if (contentRectTransform != null) {
+//					this._height = contentRectTransform.rect.height;
+//					Debug.Log (" @ ListViewItemContainer.CalculateLayoutInputVertical(): " + this._height);
+//				}
 			}
 		}
 	}

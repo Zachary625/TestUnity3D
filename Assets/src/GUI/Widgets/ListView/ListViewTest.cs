@@ -13,7 +13,7 @@ namespace Assets.src.GUI.ListView
 			Horizontal,
 		}
 
-		private _Direction _direction = _Direction.None;
+		private _Direction _direction;
 
 		public Font TextFont;
 		public Color TextColor;
@@ -23,6 +23,40 @@ namespace Assets.src.GUI.ListView
 			string[] fontNames = Font.GetOSInstalledFontNames ();
 			foreach (string fontName in fontNames) {
 //				Debug.Log (" @ ListViewTest: Font.GetOSInstalledFontNames(): " + fontName);
+			}
+
+			ListView listViewComponent = this.GetComponent<ListView> ();
+			foreach (string paragraph in Assets.src.App.AppDebug.TextParagraphs) {
+				GameObject textObj = new GameObject ();
+				Text textComponent = textObj.AddComponent<Text> ();
+				switch (listViewComponent.direction) {
+				case ListView.Direction.Vertical:
+					{
+						textComponent.horizontalOverflow = HorizontalWrapMode.Wrap;
+						textComponent.verticalOverflow = VerticalWrapMode.Truncate;
+
+						break;
+					}
+				case ListView.Direction.Horizontal:
+					{
+						textComponent.horizontalOverflow = HorizontalWrapMode.Wrap;
+						textComponent.verticalOverflow = VerticalWrapMode.Truncate;
+						break;
+					}
+				}
+
+				textComponent.color = this.TextColor;
+				textComponent.font = this.TextFont;
+				textComponent.text = paragraph;
+
+				listViewComponent.addItem (textObj);
+			}
+		}
+
+		private void _start() {
+			string[] fontNames = Font.GetOSInstalledFontNames ();
+			foreach (string fontName in fontNames) {
+				//				Debug.Log (" @ ListViewTest: Font.GetOSInstalledFontNames(): " + fontName);
 			}
 
 			bool hasVertical = this.GetComponent<VerticalLayoutGroup> () != null;
@@ -58,7 +92,6 @@ namespace Assets.src.GUI.ListView
 				textComponent.text = paragraph;
 				textComponent.transform.SetParent(this.transform);
 			}
-
 
 		}
 
