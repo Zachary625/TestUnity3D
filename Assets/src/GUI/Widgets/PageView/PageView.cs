@@ -34,29 +34,29 @@ namespace Assets.src.GUI.PageView
 
 		private _Direction _direction = _Direction.None;
 
-		public GameObject pagePrefab;
+		public GameObject pageContainerPrefab;
 
 		public float scrollDuration = 0.2f;
 
-		public int PageIndex {
+		public int pageIndex {
 			get { 
 				return this._pageIndex;	
 			}
 		}
 
-		public int Pages {
+		public int pages {
 			get { 
 				return this._pageContents.Count;
 			}
 		}
 
-		public bool Dragging {
+		public bool dragging {
 			get {
 				return this._dragging;
 			}
 		}
 
-		public bool Scrolling {
+		public bool scrolling {
 			get { 
 				return this._scrolling;
 			}
@@ -188,9 +188,9 @@ namespace Assets.src.GUI.PageView
 		private void _updatePages() {
 			if (this._pageContents.Count < this._contentPanel.transform.childCount) {
 				while (true) {
-					GameObject page = this._contentPanel.transform.GetChild (this._pageContents.Count).gameObject;
-					if (page) {
-						this._removePage (page);
+					GameObject pageContainer = this._contentPanel.transform.GetChild (this._pageContents.Count).gameObject;
+					if (pageContainer) {
+						this._removePageContainer (pageContainer);
 					} else {
 						break;
 					}
@@ -198,16 +198,16 @@ namespace Assets.src.GUI.PageView
 			}
 			else {
 				while (this._pageContents.Count > this._contentPanel.transform.childCount) {
-					this._createPage ();
+					this._createPageContainer ();
 				}
 			}
 
 			for (int pageIndex = 0; pageIndex < this._pageContents.Count; pageIndex++) {
-				GameObject page = this._contentPanel.transform.GetChild (pageIndex).gameObject;
-				PageViewPage pageComponent = page.GetComponent<PageViewPage> ();
+				GameObject pageContainer = this._contentPanel.transform.GetChild (pageIndex).gameObject;
+				PageViewPageContainer pageComponent = pageContainer.GetComponent<PageViewPageContainer> ();
 
-				page.transform.DetachChildren ();
-				this._pageContents [pageIndex].transform.SetParent (page.transform);
+				pageContainer.transform.DetachChildren ();
+				this._pageContents [pageIndex].transform.SetParent (pageContainer.transform);
 
 				pageComponent.pageIndex = pageIndex;
 				pageComponent.content = this._pageContents[pageIndex];
@@ -217,25 +217,25 @@ namespace Assets.src.GUI.PageView
 			}
 		}
 
-		private GameObject _createPage() {
-			GameObject page = Instantiate (this.pagePrefab);
-			PageViewPage pageComponent = page.GetComponent<PageViewPage> ();
+		private GameObject _createPageContainer() {
+			GameObject pageContainer = Instantiate (this.pageContainerPrefab);
+			PageViewPageContainer pageComponent = pageContainer.GetComponent<PageViewPageContainer> ();
 
-			page.transform.SetParent (this._contentPanel.transform);
+			pageContainer.transform.SetParent (this._contentPanel.transform);
 
 			pageComponent.pageView = this.gameObject;
 
-			return page;
+			return pageContainer;
 		}
 
-		private void _removePage(GameObject page) {
-			PageViewPage pageComponent = page.GetComponent<PageViewPage> ();
+		private void _removePageContainer(GameObject pageContainer) {
+			PageViewPageContainer pageComponent = pageContainer.GetComponent<PageViewPageContainer> ();
 
 			pageComponent.pageView = null;
 			pageComponent.content = null;
 
-			page.transform.SetParent (null);
-			page.transform.DetachChildren ();
+			pageContainer.transform.SetParent (null);
+			pageContainer.transform.DetachChildren ();
 
 		}
 
