@@ -77,6 +77,8 @@ namespace Assets.src.GUI.BigPageView
 		private int _pageIndex = 0;
 		private int _scrollPageIndex = -1;
 
+		private int _pageCacheSize = 5;
+
 		private bool _dragging = false;
 		private bool _scrolling = false;
 		private float _beginPosition = 0;

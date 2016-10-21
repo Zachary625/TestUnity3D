@@ -61,6 +61,7 @@ namespace Assets.src.GUI.BigPageView {
 		}
 
 		public void removePage(int pageIndex, GameObject page) {
+			
 		}
 
 	}
