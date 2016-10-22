@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Assets.src.GUI.BigPageView
 {
-	public class BigPageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
+	public class BigPageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
 		private enum _Direction
 		{
 			None,
@@ -46,7 +46,7 @@ namespace Assets.src.GUI.BigPageView
 
 		public int pages {
 			get { 
-				return this._pageContents.Count;
+				return this._pages;
 			}
 		}
 
@@ -72,10 +72,12 @@ namespace Assets.src.GUI.BigPageView
 		}
 
 		private GameObject _contentPanel;
-		private List<GameObject> _pageContents = new List<GameObject>();
 
+		private int _pages = 0;
 		private int _pageIndex = 0;
-		private int _scrollPageIndex = -1;
+
+		private int _scrollFromPageIndex = -1;
+		private int _scrollToPageIndex = -1;
 
 		private int _pageCacheSize = 5;
 
@@ -151,52 +153,9 @@ namespace Assets.src.GUI.BigPageView
 			if (content.GetComponent<RectTransform> () == null) {
 				return false;
 			}
-			if (this._pageContents.IndexOf (content) >= 0) {
-				return false;
-			}
 			return true;
 		}
-
-		public void addPage(GameObject content) {
-			if (!this._isValidPageContent (content)) {
-				return;
-			}
-			this._pageContents.Add (content);
-			this._updatePages ();
-		}
-
-		public void addPage(GameObject content, int index) {
-			if (!this._isValidPageContent (content)) {
-				return;
-			}
-			this._pageContents.Insert (index, content);
-			this._updatePages ();
-		}
-
-		public GameObject getPage(int pageIndex) {
-			try {
-				return this._pageContents[pageIndex];				
-			}
-			catch {
-				return null;
-			}
-		}
-
-		public void removePage(GameObject content) {
-			this._pageContents.Remove (content);
-			this._updatePages ();
-		}
-
-		public void removePage(int index) {
-			this._pageContents.RemoveAt (index);
-			this._updatePages ();
-		}
-
-		public void removeAllPages() {
-			this._pageContents.Clear ();
-			this._updatePages ();
-		}
-
+/*
 		private void _updatePages() {
 			if (this._pageContents.Count < this._contentPanel.transform.childCount) {
 				while (true) {
@@ -228,7 +187,7 @@ namespace Assets.src.GUI.BigPageView
 				this.jumpToPage (this._pageContents.Count - 1);
 			}
 		}
-
+*/
 		private GameObject _createPageContainer() {
 			GameObject pageContainer = Instantiate (this.pageContainerPrefab);
 			BigPageViewPageContainer pageComponent = pageContainer.GetComponent<BigPageViewPageContainer> ();
@@ -252,15 +211,21 @@ namespace Assets.src.GUI.BigPageView
 		}
 
 		private float _pageIndexToNormalizedPosition(int pageIndex) {
-			return (float)(pageIndex * 1.0 / (this._pageContents.Count - 1));
+			if (this.pages <= 1) {
+				return 0;
+			}
+			return (float)(pageIndex * 1.0 / (this.pages - 1));
 		}
 
 		private int _normalizedPositionToPageIndex(float position) {
-			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this._pageContents.Count - 1)), 0, this._pageContents.Count - 1);
+			if (this.pages <= 1) {
+				return 0;
+			}
+			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this.pages - 1)), 0, this.pages - 1);
 		}
 
 		public void jumpToPage(int pageIndex) {
-			if (this._pageContents.Count < 1) {
+			if (this.pages < 1) {
 				return;
 			}
 
@@ -270,7 +235,7 @@ namespace Assets.src.GUI.BigPageView
 
 			this._endScroll ();
 
-			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
+			pageIndex = Mathf.Clamp (pageIndex, 0, this.pages - 1);
 
 			int prevPageIndex = this._pageIndex;
 			this._pageIndex = pageIndex;
@@ -284,7 +249,7 @@ namespace Assets.src.GUI.BigPageView
 		}
 
 		public void scrollToPage(int pageIndex) {
-			if (this._pageContents.Count <= 1) {
+			if (this.pages < 1) {
 				return;
 			}
 
@@ -309,19 +274,24 @@ namespace Assets.src.GUI.BigPageView
 			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
 		}
 
+		public void OnDrag(PointerEventData data) {
+			
+		}
+
 		private void _beginScroll(int pageIndex) {
-			if (this._pageContents.Count <= 1) {
+			if (this.pages < 1) {
 				return;
 			}
 
 			this._endScroll ();
 
-			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
-			this._scrollPageIndex = pageIndex;
+			pageIndex = Mathf.Clamp (pageIndex, 0, this.pages - 1);
+			this._scrollFromPageIndex = pageIndex;
+			this._scrollToPageIndex = pageIndex;
 
-			if (this._pageIndex != this._scrollPageIndex) {
+			if (this._scrollFromPageIndex != this._scrollToPageIndex) {
 				if (this.pageScrollStartHandler != null) {
-					this.pageScrollStartHandler (this.gameObject, new BigPageViewEventArgs (this._pageIndex, this._scrollPageIndex));
+					this.pageScrollStartHandler (this.gameObject, new BigPageViewEventArgs (this._scrollFromPageIndex, this._scrollToPageIndex));
 				}
 			}
 
@@ -346,23 +316,19 @@ namespace Assets.src.GUI.BigPageView
 				this._scrolling = false;
 				this._scrollTime = 0;
 
-				int prevPageIndex = this._pageIndex; 
-				this._pageIndex = this._scrollPageIndex;
-				this._scrollPageIndex = -1;
-
 				this._beginPosition = 0;
 				this._endPosition = 0;
 
 				this._scrollAcceleration = 0;
 
-				if (prevPageIndex != this._pageIndex) {
+				if (this._scrollFromPageIndex != this._scrollToPageIndex) {
 					if (this.pageScrollStopHandler != null) {
-						this.pageScrollStopHandler (this.gameObject, new BigPageViewEventArgs (prevPageIndex, this._pageIndex));
-					}
-					if (this.pageIndexChangeHandler != null) {
-						this.pageIndexChangeHandler (this.gameObject, new BigPageViewEventArgs (prevPageIndex, this._pageIndex));
+						this.pageScrollStopHandler (this.gameObject, new BigPageViewEventArgs (this._scrollFromPageIndex, this._scrollToPageIndex));
 					}
 				}
+
+				this._scrollFromPageIndex = -1;
+				this._scrollToPageIndex = -1;
 			}
 		}
 
@@ -375,13 +341,30 @@ namespace Assets.src.GUI.BigPageView
 					this._endScroll ();
 				} else {
 					this._normalizedPosition = (float)(this._beginPosition + 0.5 * this._scrollAcceleration * this._scrollTime * this._scrollTime);
+					this._updatePageIndex ();
 					yield return null;
 				}
 			}
 		}
 
 		public void updatePages() {
-			
+			if (this._bigPageViewDelegate == null) {
+				// clear pages
+				return;
+			}
+
+			this._pages = this._bigPageViewDelegate.getPages ();
+			// refresh pages
+		}
+
+		private void _updatePageIndex() {
+			int currentPageIndex = this._normalizedPositionToPageIndex (this._normalizedPosition);
+			if (currentPageIndex != this._pageIndex) {
+				if (this.pageIndexChangeHandler != null) {
+					this.pageIndexChangeHandler (this.gameObject, new BigPageViewEventArgs (this._pageIndex, currentPageIndex));
+				}
+				this._pageIndex = currentPageIndex;
+			}
 		}
 
 	}

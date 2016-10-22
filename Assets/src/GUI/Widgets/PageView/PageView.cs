@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Assets.src.GUI.PageView
 {
-	public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
+	public class PageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
 		private enum _Direction
 		{
 			None,
@@ -66,7 +66,9 @@ namespace Assets.src.GUI.PageView
 		private List<GameObject> _pageContents = new List<GameObject>();
 
 		private int _pageIndex = 0;
-		private int _scrollPageIndex = -1;
+
+		private int _scrollFromPageIndex = -1;
+		private int _scrollToPageIndex = -1;
 
 		private bool _dragging = false;
 		private bool _scrolling = false;
@@ -260,15 +262,9 @@ namespace Assets.src.GUI.PageView
 
 			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
 
-			int prevPageIndex = this._pageIndex;
-			this._pageIndex = pageIndex;
 			this._normalizedPosition = this._pageIndexToNormalizedPosition (pageIndex);
+			this._updatePageIndex ();
 
-			if (prevPageIndex != this._pageIndex) {
-				if (this.pageIndexChangeHandler != null) {
-					this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
-				}
-			}
 		}
 
 		public void scrollToPage(int pageIndex) {
@@ -296,6 +292,11 @@ namespace Assets.src.GUI.PageView
 			this._dragging = false;
 			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
 		}
+
+		public void OnDrag(PointerEventData data) {
+			Debug.Log (" @ PageView.OnDrag(): " + this._dragging + ", " + this._scrolling);
+			this._updatePageIndex ();
+		}
 			
 		private void _beginScroll(int pageIndex) {
 			if (this._pageContents.Count <= 1) {
@@ -305,11 +306,12 @@ namespace Assets.src.GUI.PageView
 			this._endScroll ();
 
 			pageIndex = Mathf.Clamp (pageIndex, 0, this._pageContents.Count - 1);
-			this._scrollPageIndex = pageIndex;
+			this._scrollFromPageIndex = this._pageIndex;
+			this._scrollToPageIndex = pageIndex;
 
-			if (this._pageIndex != this._scrollPageIndex) {
+			if (this._scrollFromPageIndex != _scrollToPageIndex) {
 				if (this.pageScrollStartHandler != null) {
-					this.pageScrollStartHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, this._scrollPageIndex));
+					this.pageScrollStartHandler (this.gameObject, new PageViewEventArgs (this._scrollFromPageIndex, this._scrollToPageIndex));
 				}
 			}
 
@@ -334,28 +336,25 @@ namespace Assets.src.GUI.PageView
 				this._scrolling = false;
 				this._scrollTime = 0;
 
-				int prevPageIndex = this._pageIndex; 
-				this._pageIndex = this._scrollPageIndex;
-				this._scrollPageIndex = -1;
-
 				this._beginPosition = 0;
 				this._endPosition = 0;
 
 				this._scrollAcceleration = 0;
 
-				if (prevPageIndex != this._pageIndex) {
+				if (this._scrollFromPageIndex != this._scrollToPageIndex) {
 					if (this.pageScrollStopHandler != null) {
-						this.pageScrollStopHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
-					}
-					if (this.pageIndexChangeHandler != null) {
-						this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, this._pageIndex));
+						this.pageScrollStopHandler (this.gameObject, new PageViewEventArgs (_scrollFromPageIndex, this._scrollToPageIndex));
 					}
 				}
+
+				this._scrollFromPageIndex = -1;
+				this._scrollToPageIndex = -1;
+
 			}
 		}
 
 		private IEnumerator _scroll() {
-//			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
+			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
 			while (!this._dragging && this._scrolling) {
 				this._scrollTime += Time.deltaTime;
 				if (this._scrollTime >= this.scrollDuration) {
@@ -363,8 +362,19 @@ namespace Assets.src.GUI.PageView
 					this._endScroll ();
 				} else {
 					this._normalizedPosition = (float)(this._beginPosition + 0.5 * this._scrollAcceleration * this._scrollTime * this._scrollTime);
+					this._updatePageIndex ();
 					yield return null;
 				}
+			}
+		}
+
+		private void _updatePageIndex() {
+			int currentPageIndex = this._normalizedPositionToPageIndex (this._normalizedPosition);
+			if (currentPageIndex != this._pageIndex) {
+				if (this.pageIndexChangeHandler != null) {
+					this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, currentPageIndex));
+				}
+				this._pageIndex = currentPageIndex;
 			}
 		}
 

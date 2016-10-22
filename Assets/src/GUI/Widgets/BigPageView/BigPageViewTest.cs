@@ -16,7 +16,7 @@ namespace Assets.src.GUI.BigPageView {
 					RectTransform contentRT = content.AddComponent<RectTransform> ();
 					Image contentImage = content.AddComponent<Image> ();
 
-					bigPageView.addPage (content);
+//					bigPageView.addPage (content);
 
 					contentRT.anchorMin = Vector2.zero;
 					contentRT.anchorMax = Vector2.one;
