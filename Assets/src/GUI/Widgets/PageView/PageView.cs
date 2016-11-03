@@ -26,11 +26,15 @@ namespace Assets.src.GUI.PageView
 
 		public delegate void PageIndexChangeHandler(GameObject pageView, PageViewEventArgs args);
 		public delegate void PageScrollStartHandler(GameObject PageView, PageViewEventArgs args);
-		public delegate void PageScrollStopHandler(GameObject PageView, PageViewEventArgs args);
+		public delegate void PageScrollStopHandler(GameObject pageView, PageViewEventArgs args);
+		public delegate void PageDragStartHandler (GameObject pageView);
+		public delegate void PageDragStopHandler (GameObject pageView);
 
 		public PageIndexChangeHandler pageIndexChangeHandler;
 		public PageScrollStartHandler pageScrollStartHandler;
 		public PageScrollStopHandler pageScrollStopHandler;
+		public PageDragStartHandler pageDragStartHandler;
+		public PageDragStopHandler pageDragStopHandler;
 
 		private _Direction _direction = _Direction.None;
 
@@ -284,12 +288,19 @@ namespace Assets.src.GUI.PageView
 
 			this._dragging = true;
 			this._endScroll ();
+
+			if (this.pageDragStartHandler != null) {
+				this.pageDragStartHandler (this.gameObject);
+			}
 		}
 
 		public void OnEndDrag(PointerEventData data) {
 //			base.OnEndDrag (data);
 
 			this._dragging = false;
+			if (this.pageDragStopHandler != null) {
+				this.pageDragStopHandler (this.gameObject);
+			}
 			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
 		}
 
