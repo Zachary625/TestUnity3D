@@ -67,7 +67,8 @@ namespace Assets.src.GUI.PageView
 
 		public void CalculateLayoutInputHorizontal() {
 			if (pageView.GetComponent<PageView> () != null) {
-				this._width = this.transform.parent.GetComponent<RectTransform> ().rect.size.x;
+//				this._width = this.transform.parent.GetComponent<RectTransform> ().rect.size.x;
+				this._width = this.pageView.GetComponent<RectTransform> ().rect.size.x;
 			} else {
 				this._width = 0;
 			}
@@ -75,7 +76,8 @@ namespace Assets.src.GUI.PageView
 
 		public void CalculateLayoutInputVertical() {
 			if (pageView.GetComponent<PageView> () != null) {
-				this._height = this.transform.parent.GetComponent<RectTransform>().rect.size.y;
+//				this._height = this.transform.parent.GetComponent<RectTransform>().rect.size.y;
+				this._height = this.pageView.GetComponent<RectTransform> ().rect.size.y;
 			} else {
 				this._height = 0;
 			}

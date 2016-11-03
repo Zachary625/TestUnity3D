@@ -294,7 +294,7 @@ namespace Assets.src.GUI.PageView
 		}
 
 		public void OnDrag(PointerEventData data) {
-			Debug.Log (" @ PageView.OnDrag(): " + this._dragging + ", " + this._scrolling);
+//			Debug.Log (" @ PageView.OnDrag(): " + this._dragging + ", " + this._scrolling);
 			this._updatePageIndex ();
 		}
 			
@@ -354,7 +354,7 @@ namespace Assets.src.GUI.PageView
 		}
 
 		private IEnumerator _scroll() {
-			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
+//			Debug.Log (" @ PageView._scroll(): " + this._dragging + ", " + this._scrolling);
 			while (!this._dragging && this._scrolling) {
 				this._scrollTime += Time.deltaTime;
 				if (this._scrollTime >= this.scrollDuration) {
