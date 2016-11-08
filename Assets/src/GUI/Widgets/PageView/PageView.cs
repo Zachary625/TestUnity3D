@@ -25,7 +25,7 @@ namespace Assets.src.GUI.PageView
 		}
 
 		public delegate void PageIndexChangeHandler(GameObject pageView, PageViewEventArgs args);
-		public delegate void PageScrollStartHandler(GameObject PageView, PageViewEventArgs args);
+		public delegate void PageScrollStartHandler(GameObject pageView, PageViewEventArgs args);
 		public delegate void PageScrollStopHandler(GameObject pageView, PageViewEventArgs args);
 		public delegate void PageDragStartHandler (GameObject pageView);
 		public delegate void PageDragStopHandler (GameObject pageView);
@@ -122,7 +122,7 @@ namespace Assets.src.GUI.PageView
 
 		// Use this for initialization
 		void Start () {
-			this._contentPanel = this.transform.Find("Viewport").Find("Content").gameObject;
+			this._contentPanel = this.GetComponent<ScrollRect>().content.gameObject;
 
 			bool hasVertical = this._contentPanel.GetComponent<VerticalLayoutGroup> () != null;
 			bool hasHorizontal = this._contentPanel.GetComponent<HorizontalLayoutGroup> () != null;

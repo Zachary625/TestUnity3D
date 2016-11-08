@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Assets.src.GUI.BigPageView
 {
 	public class BigPageView : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
-		private enum _Direction
+		public enum Direction
 		{
 			None,
 			Vertical,
@@ -24,15 +24,19 @@ namespace Assets.src.GUI.BigPageView
 			}
 		}
 
-		public delegate void PageIndexChangeHandler(GameObject pageView, BigPageViewEventArgs args);
-		public delegate void PageScrollStartHandler(GameObject PageView, BigPageViewEventArgs args);
-		public delegate void PageScrollStopHandler(GameObject PageView, BigPageViewEventArgs args);
+		public delegate void PageIndexChangeHandler(GameObject bigPageView, BigPageViewEventArgs args);
+		public delegate void PageScrollStartHandler(GameObject bigPageView, BigPageViewEventArgs args);
+		public delegate void PageScrollStopHandler(GameObject bigPageView, BigPageViewEventArgs args);
+		public delegate void PageDragStartHandler (GameObject bigPageView);
+		public delegate void PageDragStopHandler (GameObject bigPageView);
 
 		public PageIndexChangeHandler pageIndexChangeHandler;
 		public PageScrollStartHandler pageScrollStartHandler;
 		public PageScrollStopHandler pageScrollStopHandler;
+		public PageDragStartHandler pageDragStartHandler;
+		public PageDragStopHandler pageDragStopHandler;
 
-		private _Direction _direction = _Direction.None;
+		public Direction direction;
 
 		public GameObject pageContainerPrefab;
 
@@ -95,13 +99,13 @@ namespace Assets.src.GUI.BigPageView
 				float result = 0;
 				ScrollRect scrollRect = this.GetComponent<ScrollRect> ();
 
-				switch (this._direction) {
-				case _Direction.Horizontal:
+				switch (this.direction) {
+				case Direction.Horizontal:
 					{
 						result = scrollRect.horizontalNormalizedPosition;
 						break;
 					}
-				case _Direction.Vertical:
+				case Direction.Vertical:
 					{
 						result = scrollRect.verticalNormalizedPosition;
 						break;
@@ -112,13 +116,13 @@ namespace Assets.src.GUI.BigPageView
 			set { 
 				ScrollRect scrollRect = this.GetComponent<ScrollRect> ();
 
-				switch (this._direction) {
-				case _Direction.Horizontal:
+				switch (this.direction) {
+				case Direction.Horizontal:
 					{
 						scrollRect.horizontalNormalizedPosition = value;
 						break;
 					}
-				case _Direction.Vertical:
+				case Direction.Vertical:
 					{
 						scrollRect.verticalNormalizedPosition = value;
 						break;
@@ -130,16 +134,11 @@ namespace Assets.src.GUI.BigPageView
 
 		// Use this for initialization
 		void Start () {
-			this._contentPanel = this.transform.Find("Viewport").Find("Content").gameObject;
+			this._contentPanel = this.GetComponent<ScrollRect>().content.gameObject;
 
-			bool hasVertical = this._contentPanel.GetComponent<VerticalLayoutGroup> () != null;
-			bool hasHorizontal = this._contentPanel.GetComponent<HorizontalLayoutGroup> () != null;
-
-			if (hasVertical && !hasHorizontal) {
-				this._direction = _Direction.Vertical;
-			} else if(!hasVertical && hasHorizontal) {
-				this._direction = _Direction.Horizontal;
-			}
+			ScrollRect scrollRect = this.GetComponent<ScrollRect> ();
+			scrollRect.horizontal = (this.direction == Direction.Horizontal);
+			scrollRect.vertical = (this.direction == Direction.Vertical);
 		}
 
 		// Update is called once per frame
@@ -248,29 +247,24 @@ namespace Assets.src.GUI.BigPageView
 			}
 		}
 
-		public void scrollToPage(int pageIndex) {
-			if (this.pages < 1) {
-				return;
-			}
-
-			if (this._dragging) {
-				return;
-			}
-
-			this._beginScroll (pageIndex);
-		}
-
 		public void OnBeginDrag(PointerEventData data) {
 			//			base.OnBeginDrag (data);
 
 			this._dragging = true;
 			this._endScroll ();
+
+			if (this.pageDragStartHandler != null) {
+				this.pageDragStartHandler (this.gameObject);
+			}
 		}
 
 		public void OnEndDrag(PointerEventData data) {
 			//			base.OnEndDrag (data);
 
 			this._dragging = false;
+			if (this.pageDragStopHandler != null) {
+				this.pageDragStopHandler (this.gameObject);
+			}
 			this._beginScroll (this._normalizedPositionToPageIndex(this._normalizedPosition));
 		}
 
@@ -371,8 +365,8 @@ namespace Assets.src.GUI.BigPageView
 
 	public interface IBigPageViewDelegate {
 		int getPages();
-		GameObject createPage (int pageIndex);
-		void removePage(int pageIndex, GameObject page);
+
+		void getPage(GameObject pageContainer, int pageIndex);
 	}
 
 }
