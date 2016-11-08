@@ -5,6 +5,8 @@ using UnityEngine.UI;
 namespace Assets.src.GUI.BigPageView {
 	public class BigPageViewTest : MonoBehaviour, IBigPageViewDelegate {
 
+		public Font font;
+
 		// Use this for initialization
 		void Start () {
 			BigPageView bigPageView = this.GetComponent<BigPageView> ();
@@ -36,12 +38,35 @@ namespace Assets.src.GUI.BigPageView {
 
 		public int GetPages() {
 			Debug.Log (" @ BigPageViewTest.getPages()");
-			return 10;
+			return 1000;
 		}
 
 		public void GetPage(GameObject pageContainer, int pageIndex) {
 			Debug.Log (" @ BigPageViewTest.getPage(" + pageIndex + ")");
+			Transform pageContentTransform = pageContainer.transform.Find ("PageContent");
+			if (!pageContentTransform) {
+				GameObject pageContent = new GameObject ();
+				pageContent.name = "PageContent";
+				RectTransform contentRT = pageContent.AddComponent<RectTransform> ();
+				Text contentText = pageContent.AddComponent<Text> ();
 
+				contentRT.SetParent (pageContainer.transform);
+
+				contentRT.anchorMin = Vector2.zero;
+				contentRT.anchorMax = Vector2.one;
+
+				contentRT.offsetMin = Vector2.zero;
+				contentRT.offsetMax = Vector2.zero;
+
+				contentText.alignment = TextAnchor.MiddleCenter;
+				contentText.fontSize = 30;
+				contentText.color = Color.red;
+				contentText.text = "PageIndex: " + pageIndex;
+				contentText.font = this.font;
+
+			} else {
+				pageContentTransform.GetComponent<Text> ().text = "PageIndex: " + pageIndex;
+			}
 		}
 	}
 }

@@ -7,17 +7,8 @@ namespace Assets.src.GUI.BigPageView
 	public class BigPageViewPageContainer : MonoBehaviour, ILayoutElement {
 
 		public GameObject pageView;
-		public GameObject content;
-		public int pageIndex {
-			get { 
-				return this._pageIndex;
-			}
-			set { 
-				this._pageIndex = value;	
-			}
-		}
+		public int pageIndex;
 
-		private int _pageIndex = -1;
 		private float _width;
 		private float _height;
 
