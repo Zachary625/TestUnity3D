@@ -19,6 +19,8 @@ namespace Assets.src.GUI.BigPageView {
 				Debug.Log(" @ BigPageViewTest.PageScrollStopHandler(" + args.PrevPageIndex + " -> " + args.NextPageIndex + ")");
 			});
 
+			bigPageView.bigPageViewDelegate = this;
+
 		}
 
 		private GameObject _createPageContent() {
@@ -32,12 +34,14 @@ namespace Assets.src.GUI.BigPageView {
 
 		}
 
-		public int getPages() {
+		public int GetPages() {
+			Debug.Log (" @ BigPageViewTest.getPages()");
 			return 10;
 		}
 
-		public void getPage(GameObject pageContainer, int pageIndex) {
-			
+		public void GetPage(GameObject pageContainer, int pageIndex) {
+			Debug.Log (" @ BigPageViewTest.getPage(" + pageIndex + ")");
+
 		}
 	}
 }

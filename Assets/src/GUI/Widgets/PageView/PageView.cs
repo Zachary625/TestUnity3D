@@ -219,7 +219,7 @@ namespace Assets.src.GUI.PageView
 				pageComponent.content = this._pageContents[pageIndex];
 			}
 			if (this._pageContents.Count > 0 && this._pageIndex >= this._pageContents.Count) {
-				this.jumpToPage (this._pageContents.Count - 1);
+				this.JumpToPage (this._pageContents.Count - 1);
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace Assets.src.GUI.PageView
 			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this._pageContents.Count - 1)), 0, this._pageContents.Count - 1);
 		}
 
-		public void jumpToPage(int pageIndex) {
+		public void JumpToPage(int pageIndex) {
 			if (this._pageContents.Count < 1) {
 				return;
 			}
@@ -271,7 +271,7 @@ namespace Assets.src.GUI.PageView
 
 		}
 
-		public void scrollToPage(int pageIndex) {
+		public void ScrollToPage(int pageIndex) {
 			if (this._pageContents.Count <= 1) {
 				return;
 			}
@@ -382,10 +382,11 @@ namespace Assets.src.GUI.PageView
 		private void _updatePageIndex() {
 			int currentPageIndex = this._normalizedPositionToPageIndex (this._normalizedPosition);
 			if (currentPageIndex != this._pageIndex) {
-				if (this.pageIndexChangeHandler != null) {
-					this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (this._pageIndex, currentPageIndex));
-				}
+				int prevPageIndex = this._pageIndex;
 				this._pageIndex = currentPageIndex;
+				if (this.pageIndexChangeHandler != null) {
+					this.pageIndexChangeHandler (this.gameObject, new PageViewEventArgs (prevPageIndex, currentPageIndex));
+				}
 			}
 		}
 
