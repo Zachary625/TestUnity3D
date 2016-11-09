@@ -8,6 +8,7 @@ namespace Assets.src.GUI.BigPageView {
 		public GameObject bigPageViewGameObject;
 		
 		public void SetLayoutHorizontal() {
+			Debug.Log (" @ BigPageViewContentLayoutGroup.SetLayoutHorizontal()");
 			BigPageView bigPageView = bigPageViewGameObject.GetComponent<BigPageView> ();
 			RectTransform bigPageViewRectTransform = (bigPageViewGameObject.transform as RectTransform);
 			float contentWidth = bigPageViewRectTransform.rect.width;
@@ -17,6 +18,11 @@ namespace Assets.src.GUI.BigPageView {
 			switch (bigPageView.direction) {
 			case BigPageView.Direction.Horizontal: {
 					contentWidth *= bigPageView.bigPageViewDelegate != null? bigPageView.pages: 0;
+
+					if (contentWidth != contentRectTransform.rect.width || contentHeight != contentRectTransform.rect.height) {
+						contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
+						contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
+					}
 
 					for (int childIndex = 0; childIndex < this.transform.childCount; childIndex++) {
 						RectTransform pageContainerTransform = this.transform.GetChild (childIndex) as RectTransform;
@@ -29,11 +35,6 @@ namespace Assets.src.GUI.BigPageView {
 						pageContainerTransform.offsetMax = new Vector2(bigPageViewRectTransform.rect.width * (pageContainer.pageIndex + 1), 0);
 
 					}
-					contentRectTransform.anchorMin = new Vector2(0, 1);
-					contentRectTransform.anchorMax = new Vector2(0, 1);
-
-					contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
-					contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
 
 					break;
 				}					
@@ -42,6 +43,7 @@ namespace Assets.src.GUI.BigPageView {
 		}
 
 		public void SetLayoutVertical() {
+			Debug.Log (" @ BigPageViewContentLayoutGroup.SetLayoutVertical()");
 			BigPageView bigPageView = bigPageViewGameObject.GetComponent<BigPageView> ();
 			RectTransform bigPageViewRectTransform = (bigPageViewGameObject.transform as RectTransform);
 			float contentWidth = bigPageViewRectTransform.rect.width;
@@ -51,6 +53,11 @@ namespace Assets.src.GUI.BigPageView {
 			switch (bigPageView.direction) {
 			case BigPageView.Direction.Vertical: {
 					contentWidth *= bigPageView.bigPageViewDelegate != null?bigPageView.pages:0;
+
+					if (contentWidth != contentRectTransform.rect.width || contentHeight != contentRectTransform.rect.height) {
+						contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
+						contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
+					}
 
 					for (int childIndex = 0; childIndex < this.transform.childCount; childIndex++) {
 						RectTransform pageContainerTransform = this.transform.GetChild (childIndex) as RectTransform;
@@ -63,18 +70,11 @@ namespace Assets.src.GUI.BigPageView {
 						pageContainerTransform.offsetMax = new Vector2(bigPageViewRectTransform.rect.width, -bigPageViewRectTransform.rect.height * pageContainer.pageIndex);
 					}
 
-
-					contentRectTransform.anchorMin = new Vector2(0, 1);
-					contentRectTransform.anchorMax = new Vector2(0, 1);
-
-					contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
-					contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
-
 					break;
 				}					
 			}
 
 		}
-				}
+	}
 }
 

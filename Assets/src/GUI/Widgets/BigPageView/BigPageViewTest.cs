@@ -6,6 +6,7 @@ namespace Assets.src.GUI.BigPageView {
 	public class BigPageViewTest : MonoBehaviour, IBigPageViewDelegate {
 
 		public Font font;
+		public InputField gotoPageIndexInputField;
 
 		// Use this for initialization
 		void Start () {
@@ -42,7 +43,7 @@ namespace Assets.src.GUI.BigPageView {
 		}
 
 		public void GetPage(GameObject pageContainer, int pageIndex) {
-			Debug.Log (" @ BigPageViewTest.getPage(" + pageIndex + ")");
+//			Debug.Log (" @ BigPageViewTest.getPage(" + pageIndex + ")");
 			Transform pageContentTransform = pageContainer.transform.Find ("PageContent");
 			if (!pageContentTransform) {
 				GameObject pageContent = new GameObject ();
@@ -67,6 +68,10 @@ namespace Assets.src.GUI.BigPageView {
 			} else {
 				pageContentTransform.GetComponent<Text> ().text = "PageIndex: " + pageIndex;
 			}
+		}
+
+		public void GotoPageIndex() {
+			this.GetComponent<BigPageView> ().jumpToPage (System.Int32.Parse(this.gotoPageIndexInputField.text));
 		}
 	}
 }

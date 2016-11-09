@@ -191,14 +191,14 @@ namespace Assets.src.GUI.BigPageView
 
 		private void _updatePages() {
 			// TODO
-			Debug.Log(" @ BigPageView._updatePages(): " + this._pageIndex);
+//			Debug.Log(" @ BigPageView._updatePages(): " + this._pageIndex);
 			bool[] cacheStatus = new bool[2 * this._pageCacheSize + 1];
 			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
 				GameObject pageContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
 				BigPageViewPageContainer pageContainer = pageContainerGameObject.GetComponent<BigPageViewPageContainer> ();
 				if (pageContainer.pageIndex < this._pageIndex - this._pageCacheSize || pageContainer.pageIndex > this._pageIndex + this._pageCacheSize) {
 					this._freePageContainer (pageContainerGameObject);
-					Debug.Log (" @ BigPageview._free(" + pageContainer.pageIndex + ")");
+//					Debug.Log (" @ BigPageview._free(" + pageContainer.pageIndex + ")");
 				} else {
 					cacheStatus [pageContainer.pageIndex - (this._pageIndex - this._pageCacheSize)] = true;
 				}
@@ -207,7 +207,7 @@ namespace Assets.src.GUI.BigPageView
 			for(int pageIndex = this._pageIndex - this._pageCacheSize; pageIndex <= this._pageIndex + this._pageCacheSize; pageIndex++) {
 				if (pageIndex >= 0 && pageIndex <= this.pages - 1 && !cacheStatus [pageIndex - (this._pageIndex - this._pageCacheSize)]) {
 					GameObject pageContainerGameObject = this._allocPageContainer ();
-					Debug.Log (" @ BigPageview._alloc(" + pageIndex + ")");
+//					Debug.Log (" @ BigPageview._alloc(" + pageIndex + ")");
 					BigPageViewPageContainer pageContainer = pageContainerGameObject.GetComponent<BigPageViewPageContainer> ();
 					pageContainer.pageIndex = pageIndex;
 					this.bigPageViewDelegate.GetPage (pageContainerGameObject, pageIndex);
@@ -369,7 +369,32 @@ namespace Assets.src.GUI.BigPageView
 					this.pageIndexChangeHandler(this.gameObject, new BigPageViewEventArgs (prevPageIndex, this._pageIndex));
 				}
 			}
+ 
 			this._updatePages();
+		}
+
+		private void _updateContentPanelRect() {
+			RectTransform bigPageViewRectTransform = this.GetComponent<RectTransform>();
+			float contentWidth = bigPageViewRectTransform.rect.width;
+			float contentHeight = bigPageViewRectTransform.rect.height;
+			RectTransform contentRectTransform = this._contentPanel.GetComponent<RectTransform> ();
+
+			switch (this.direction) {
+			case Direction.Horizontal: {
+					contentWidth *= this.bigPageViewDelegate != null? this.pages: 0;
+					break;
+				}					
+			case Direction.Vertical: {
+					contentWidth *= this.bigPageViewDelegate != null?this.pages:0;
+					break;
+				}					
+			}
+			contentRectTransform.anchorMin = new Vector2(0, 1);
+			contentRectTransform.anchorMax = new Vector2(0, 1);
+
+			contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
+			contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
+
 		}
 
 		private void _updatePageIndex() {
