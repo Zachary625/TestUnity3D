@@ -8,7 +8,6 @@ namespace Assets.src.GUI.BigPageView {
 		public GameObject bigPageViewGameObject;
 		
 		public void SetLayoutHorizontal() {
-			Debug.Log (" @ BigPageViewContentLayoutGroup.SetLayoutHorizontal()");
 			BigPageView bigPageView = bigPageViewGameObject.GetComponent<BigPageView> ();
 			RectTransform bigPageViewRectTransform = (bigPageViewGameObject.transform as RectTransform);
 			float contentWidth = bigPageViewRectTransform.rect.width;
@@ -43,7 +42,6 @@ namespace Assets.src.GUI.BigPageView {
 		}
 
 		public void SetLayoutVertical() {
-			Debug.Log (" @ BigPageViewContentLayoutGroup.SetLayoutVertical()");
 			BigPageView bigPageView = bigPageViewGameObject.GetComponent<BigPageView> ();
 			RectTransform bigPageViewRectTransform = (bigPageViewGameObject.transform as RectTransform);
 			float contentWidth = bigPageViewRectTransform.rect.width;
