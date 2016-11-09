@@ -154,16 +154,6 @@ namespace Assets.src.GUI.BigPageView
 		void Update () {
 		}
 
-		private bool _isValidPageContent(GameObject content) {
-			if (content == null) {
-				return false;
-			}
-			if (content.GetComponent<RectTransform> () == null) {
-				return false;
-			}
-			return true;
-		}
-
 		private GameObject _allocPageContainer() {
 			GameObject pageContainerGameObject;
 
@@ -176,8 +166,6 @@ namespace Assets.src.GUI.BigPageView
 				pageContainerGameObject.SetActive (true);
 			} else {
 				pageContainerGameObject = Instantiate (this.pageContainerPrefab);
-				BigPageViewPageContainer pageContainer = pageContainerGameObject.GetComponent<BigPageViewPageContainer> ();
-				pageContainer.pageView = this.gameObject;
 			}
 			pageContainerGameObject.transform.SetParent (this._contentPanel.transform);
 			return pageContainerGameObject;

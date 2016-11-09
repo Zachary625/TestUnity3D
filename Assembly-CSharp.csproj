@@ -48,6 +48,9 @@
      <Compile Include="Assets\src\App\AppDebug.cs" />
      <Compile Include="Assets\src\App\AppManager.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigListView\BigListView.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\BigListView\BigListViewContentLayoutGroup.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\BigListView\BigListViewItemContainer.cs" />
+     <Compile Include="Assets\src\GUI\Widgets\BigListView\BigListViewTest.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigPageView\BigPageView.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigPageView\BigPageViewContentLayoutGroup.cs" />
      <Compile Include="Assets\src\GUI\Widgets\BigPageView\BigPageViewPageContainer.cs" />
