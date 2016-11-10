@@ -38,7 +38,6 @@ namespace Assets.src.GUI.BigPageView {
 		}
 
 		public int GetPages() {
-			Debug.Log (" @ BigPageViewTest.getPages()");
 			return 1000;
 		}
 

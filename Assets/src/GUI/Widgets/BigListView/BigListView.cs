@@ -41,12 +41,53 @@ namespace Assets.src.GUI.BigListView
 
 		private int _items = 0;
 
-		private int _itemCacheSize = 2;
-		private int _minItemIndex = 0;
-		private int _maxItemIndex = 0;
+		private int _itemCacheSize = 1;
 
 		private IBigListViewDelegate _bigListViewDelegate = null;
 
+		private float _displaySegmentHead {
+			get { 
+				float result = 0;
+				if (this._contentPanel != null) {
+					switch (this.direction) {
+					case Direction.Horizontal:
+						{
+							result = - this._contentPanel.GetComponent<RectTransform> ().localPosition.x;
+							break;
+						}
+					case Direction.Vertical:
+						{
+							result = - this._contentPanel.GetComponent<RectTransform> ().localPosition.y;						
+							break;
+						}
+					}
+				}
+				return result;
+			}
+		}
+
+		private float _displaySegmentTail {
+			get {
+				float result = 0;
+				if (this._contentPanel != null) {
+					switch (this.direction) {
+					case Direction.Horizontal:
+						{
+							result = - this._contentPanel.GetComponent<RectTransform> ().localPosition.x + this.GetComponent<RectTransform>().rect.width;
+							break;
+						}
+					case Direction.Vertical:
+						{
+							result = - this._contentPanel.GetComponent<RectTransform> ().localPosition.y - this.GetComponent<RectTransform>().rect.height;						
+							break;
+						}
+					}
+				}
+				return result;
+			}
+		}
+
+/*
 		private float _normalizedPosition {
 			get { 
 				float result = 0;
@@ -83,10 +124,10 @@ namespace Assets.src.GUI.BigListView
 				}
 			}
 		}
-
+*/
 		private Vector2 _contentSize = Vector2.zero;
-		private List<Vector2> _itemSizeList = new List<Vector2> ();
-		private List<Vector2> _itemPositionList = new List<Vector2> ();
+		private List<float> _itemSizeList = new List<float> ();
+		private List<float> _itemPositionList = new List<float> ();
 
 		public Vector2 contentSize {
 			get {
@@ -94,11 +135,11 @@ namespace Assets.src.GUI.BigListView
 			}
 		}
 
-		public Vector2 GetItemSize(int itemIndex) {
+		public float GetItemSize(int itemIndex) {
 			return this._itemSizeList [itemIndex];
 		}
 
-		public Vector2 GetItemPosition(int itemIndex) {
+		public float GetItemPosition(int itemIndex) {
 			return this._itemPositionList [itemIndex];
 		}
 
@@ -121,9 +162,6 @@ namespace Assets.src.GUI.BigListView
 		private GameObject _allocItemContainer() {
 			GameObject itemContainerGameObject;
 
-			//			if (this._pageContainerCache.transform.childCount > 0) {
-			//				pageContainerGameObject = this._pageContainerCache.transform.GetChild (0).gameObject;
-			//				pageContainerGameObject.SetActive (true);
 			if(this._itemContainerCache.Count > 0) {
 				itemContainerGameObject = this._itemContainerCache[0];				
 				this._itemContainerCache.RemoveAt (0);
@@ -142,22 +180,44 @@ namespace Assets.src.GUI.BigListView
 
 		private void _updateItems() {
 			// TODO
-			//			Debug.Log(" @ BigPageView._updatePages(): " + this._pageIndex);
-			bool[] cacheStatus = new bool[2 * this._itemCacheSize + (this._maxItemIndex - this._minItemIndex)];
-			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
-				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-				BigListViewItemContainer itemContainer = itemContainerGameObject.GetComponent<BigListViewItemContainer> ();
-				if (itemContainer.itemIndex < this._minItemIndex - this._itemCacheSize || itemContainer.itemIndex > this._maxItemIndex + this._itemCacheSize) {
-					this._freeItemContainer (itemContainerGameObject);
-					//					Debug.Log (" @ BigPageview._free(" + pageContainer.pageIndex + ")");
+			int minDisplayItemIndex = -1;
+			int maxDisplayItemIndex = -1;
+
+			for (int itemIndex = 0; itemIndex < this.items; itemIndex++) {
+				bool displayItem = this._isItemInDisplaySegment (itemIndex);
+				if (displayItem) {
+					if (minDisplayItemIndex < 0) {
+						minDisplayItemIndex = itemIndex;
+					}
 				} else {
-					cacheStatus [itemContainer.itemIndex - (this._minItemIndex - this._itemCacheSize)] = true;
+					if (minDisplayItemIndex >= 0) {
+						maxDisplayItemIndex = itemIndex - 1;
+					}
+				}
+				if (minDisplayItemIndex >= 0 && maxDisplayItemIndex >= 0) {
+					break;
 				}
 			}
 
-			for(int itemIndex = this._minItemIndex - this._itemCacheSize; itemIndex <= this._maxItemIndex + this._itemCacheSize; itemIndex++) {
-				if (itemIndex >= 0 && itemIndex <= this.items - 1 && !cacheStatus [itemIndex - (this._minItemIndex - this._itemCacheSize)]) {
+			Debug.Log (" @ BigListView._updateItems(): [" + minDisplayItemIndex + ", " + maxDisplayItemIndex + "]");
+
+			bool[] cacheStatus = new bool[2 * this._itemCacheSize + maxDisplayItemIndex - minDisplayItemIndex + 1];
+
+			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
+				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
+				BigListViewItemContainer itemContainer = itemContainerGameObject.GetComponent<BigListViewItemContainer> ();
+				if (itemContainer.itemIndex < minDisplayItemIndex - this._itemCacheSize || itemContainer.itemIndex > maxDisplayItemIndex + this._itemCacheSize) {
+					this._freeItemContainer (itemContainerGameObject);
+					Debug.Log (" @ BigListView._free(" + itemContainer.itemIndex + ")");
+				} else {
+					cacheStatus [itemContainer.itemIndex - (minDisplayItemIndex - this._itemCacheSize)] = true;
+				}
+			}
+
+			for(int itemIndex = minDisplayItemIndex - this._itemCacheSize; itemIndex <= maxDisplayItemIndex + this._itemCacheSize; itemIndex++) {
+				if (itemIndex >= 0 && itemIndex <= this.items - 1 && !cacheStatus [itemIndex - (minDisplayItemIndex - this._itemCacheSize)]) {
 					GameObject itemContainerGameObject = this._allocItemContainer ();
+					Debug.Log (" @ BigListView._alloc(" + itemIndex + ")");
 					BigListViewItemContainer itemContainer = itemContainerGameObject.GetComponent<BigListViewItemContainer> ();
 					itemContainer.itemIndex = itemIndex;
 					this.bigListViewDelegate.GetItem (itemContainerGameObject, itemIndex);
@@ -167,46 +227,41 @@ namespace Assets.src.GUI.BigListView
 
 		}
 
-//		private float _pageIndexToNormalizedPosition(int pageIndex) {
-//			if (this.pages <= 1) {
-//				return 0;
-//			}
-//			return (float)(pageIndex * 1.0 / (this.pages - 1));
-//		}
-//
-//		private int _normalizedPositionToPageIndex(float position) {
-//			if (this.pages <= 1) {
-//				return 0;
-//			}
-//			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this.pages - 1)), 0, this.pages - 1);
-//		}
+		public bool _isItemInDisplaySegment(int index) {
+			float itemHead = this._itemPositionList [index];
+			float itemTail = this._itemPositionList [index];
 
-//
-//		public void jumpToItem(int pageIndex) {
-//			if (this.pages < 1) {
-//				return;
-//			}
-//
-//			if (this._dragging) {
-//				return;
-//			}
-//
-//			this._endScroll ();
-//
-//			pageIndex = Mathf.Clamp (pageIndex, 0, this.pages - 1);
-//
-//			int prevPageIndex = this._pageIndex;
-//			this._pageIndex = pageIndex;
-//			this._updatePages ();
-//			this._normalizedPosition = this._pageIndexToNormalizedPosition (pageIndex);
-//
-//
-//			if (prevPageIndex != this._pageIndex) {
-//				if (this.pageIndexChangeHandler != null) {
-//					this.pageIndexChangeHandler (this.gameObject, new BigPageViewEventArgs (prevPageIndex, this._pageIndex));
-//				}
-//			}
-//		}
+			bool result = true;
+			switch (this.direction) {
+			case Direction.Horizontal:
+				{
+					itemTail += this._itemSizeList [index];					
+					if (itemTail < this._displaySegmentHead) {
+						result = false;
+					}
+					if (itemHead > this._displaySegmentTail) {
+						result = false;						
+					}
+
+					break;
+				}
+			case Direction.Vertical:
+				{
+					itemTail -= this._itemSizeList [index];
+					if (itemTail > this._displaySegmentHead) {
+						result = false;
+					}
+					if (itemHead < this._displaySegmentTail) {
+						result = false;						
+					}
+					break;
+				}
+			}
+
+			Debug.Log (" @ BigListView._isItemInDisplaySegment(" + index + ")\nitem: " + itemHead + " -> " + itemTail + "\nsegment: " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
+
+			return result;
+		}
 
 		public void OnDrag(PointerEventData data) {
 			this._updateItems();
@@ -223,9 +278,8 @@ namespace Assets.src.GUI.BigListView
 			}
 
 			this._items = this.bigListViewDelegate.GetItems ();
-			this._minItemIndex = 0;
-			this._maxItemIndex = 0;
 
+			this._updateContentPanelRect ();
 			this._updateItems();
 		}
 
@@ -243,9 +297,9 @@ namespace Assets.src.GUI.BigListView
 					contentWidth = 0;
 					if (this.bigListViewDelegate != null) {
 						for (int itemIndex = 0; itemIndex < this.items; itemIndex++) {
-							this._itemPositionList.Add (new Vector2(contentWidth, 0));
-							this._itemSizeList.Add (this.bigListViewDelegate.GetItemSize(itemIndex));
-							contentWidth += this._itemSizeList[itemIndex].x;
+							this._itemPositionList.Add (contentWidth);
+							this._itemSizeList.Add (this.bigListViewDelegate.GetItemSize(itemIndex).x);
+							contentWidth += this._itemSizeList[itemIndex];
 						}
 					}
 					break;
@@ -254,14 +308,16 @@ namespace Assets.src.GUI.BigListView
 					contentHeight = 0;
 					if (this.bigListViewDelegate != null) {
 						for (int itemIndex = 0; itemIndex < this.items; itemIndex++) {
-							this._itemPositionList.Add (new Vector2(0, -contentHeight));
-							this._itemSizeList.Add (this.bigListViewDelegate.GetItemSize(itemIndex));
-							contentHeight += this._itemSizeList[itemIndex].y;
+							this._itemPositionList.Add (-contentHeight);
+							this._itemSizeList.Add (this.bigListViewDelegate.GetItemSize(itemIndex).y);
+							contentHeight += this._itemSizeList[itemIndex];
 						}
 					}
 					break;
 				}					
 			}
+
+			Debug.Log(" @ BigListView._updateContentPanelRect(): contentSize: " + contentWidth + " * " + contentHeight);
 
 			contentRectTransform.anchorMin = new Vector2(0, 1);
 			contentRectTransform.anchorMax = new Vector2(0, 1);

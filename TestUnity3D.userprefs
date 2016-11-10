@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/GUI/Widgets/BigPageView/BigPageView.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/GUI/Widgets/BigListView/BigListView.cs">
     <Files>
-      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageView.cs" Line="189" Column="46" />
-      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageViewTest.cs" Line="15" Column="68" />
-      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageViewContentLayoutGroup.cs" Line="29" Column="125" />
-      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageViewPageContainer.cs" Line="34" Column="10" />
+      <File FileName="Assets/src/GUI/Widgets/BigListView/BigListView.cs" Line="52" Column="38" />
+      <File FileName="Assets/src/GUI/Widgets/BigListView/BigListViewContentLayoutGroup.cs" Line="1" Column="1" />
+      <File FileName="Assets/src/GUI/Widgets/BigListView/BigListViewTest.cs" Line="1" Column="1" />
+      <File FileName="Assets/src/GUI/Widgets/BigListView/BigListViewItemContainer.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
