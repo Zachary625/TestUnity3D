@@ -195,12 +195,12 @@ namespace Assets.src.GUI.BigListView
 					} else {
 						minDisplayItemIndex = Mathf.Min (minDisplayItemIndex, itemIndex);
 					}
+
 					if (maxDisplayItemIndex < 0) {
 						maxDisplayItemIndex = itemIndex;
 					} else {
 						maxDisplayItemIndex = Mathf.Max (maxDisplayItemIndex, itemIndex);
 					}
-
 				}
 			}
 
@@ -276,11 +276,22 @@ namespace Assets.src.GUI.BigListView
 		public void UpdateItems() {
 			if (this.bigListViewDelegate == null) {
 				for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
-					GameObject pageContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-					this._freeItemContainer (pageContainerGameObject);
+					GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
+					this._freeItemContainer (itemContainerGameObject);
 				}
 
 				return;
+			}
+
+			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
+				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
+				this._freeItemContainer (itemContainerGameObject);
+			}
+			this._contentPanel.transform.DetachChildren ();
+			while (this._itemContainerCache.Count != 0) {
+				GameObject itemContainer = this._itemContainerCache [0];
+				this._itemContainerCache.RemoveAt (0);
+				Destroy (itemContainer);
 			}
 
 			this._items = this.bigListViewDelegate.GetItems ();

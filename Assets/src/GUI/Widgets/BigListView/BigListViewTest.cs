@@ -8,7 +8,9 @@ namespace Assets.src.GUI.BigListView
 	public class BigListViewTest : MonoBehaviour, IBigListViewDelegate {
 		public Font font;
 
+		private int _itemNum = 100;
 
+		public InputField UpdateItemNumInputField;
 
 		// Use this for initialization
 		void Start () {
@@ -24,7 +26,7 @@ namespace Assets.src.GUI.BigListView
 
 		public int GetItems() {
 			Debug.Log (" @ BigListViewTest.GetItems()");
-			return 1000;			
+			return this._itemNum;			
 		}
 
 		public void GetItem(GameObject itemContainer, int itemIndex) {
@@ -57,6 +59,13 @@ namespace Assets.src.GUI.BigListView
 
 		public Vector2 GetItemSize(int itemIndex) {
 			return new Vector2 (400, 40);
+		}
+
+		public void UpdateItemNum() {
+			this._itemNum = System.Int32.Parse (this.UpdateItemNumInputField.text);
+
+			this.GetComponent<BigListView> ().UpdateItems();
+
 		}
 	}
 }
