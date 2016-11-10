@@ -173,8 +173,12 @@ namespace Assets.src.GUI.BigPageView
 
 		private void _freePageContainer(GameObject pageContainerGameObject) {
 //			pageContainerGameObject.transform.SetParent (this._pageContainerCache.transform);
-			this._pageContainerCache.Add(pageContainerGameObject);
-			pageContainerGameObject.SetActive (false);
+			if(!this._pageContainerCache.Contains(pageContainerGameObject)) {
+				this._pageContainerCache.Add(pageContainerGameObject);
+			}
+			if (pageContainerGameObject.activeSelf) {
+				pageContainerGameObject.SetActive (false);
+			}
 		}
 
 		private void _updatePages() {
@@ -183,12 +187,14 @@ namespace Assets.src.GUI.BigPageView
 			bool[] cacheStatus = new bool[2 * this._pageCacheSize + 1];
 			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
 				GameObject pageContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-				BigPageViewPageContainer pageContainer = pageContainerGameObject.GetComponent<BigPageViewPageContainer> ();
-				if (pageContainer.pageIndex < this._pageIndex - this._pageCacheSize || pageContainer.pageIndex > this._pageIndex + this._pageCacheSize) {
-					this._freePageContainer (pageContainerGameObject);
-//					Debug.Log (" @ BigPageview._free(" + pageContainer.pageIndex + ")");
-				} else {
-					cacheStatus [pageContainer.pageIndex - (this._pageIndex - this._pageCacheSize)] = true;
+				if (pageContainerGameObject.activeSelf) {
+					BigPageViewPageContainer pageContainer = pageContainerGameObject.GetComponent<BigPageViewPageContainer> ();
+					if (pageContainer.pageIndex < this._pageIndex - this._pageCacheSize || pageContainer.pageIndex > this._pageIndex + this._pageCacheSize) {
+						this._freePageContainer (pageContainerGameObject);
+						//					Debug.Log (" @ BigPageview._free(" + pageContainer.pageIndex + ")");
+					} else {
+						cacheStatus [pageContainer.pageIndex - (this._pageIndex - this._pageCacheSize)] = true;
+					}
 				}
 			}
 

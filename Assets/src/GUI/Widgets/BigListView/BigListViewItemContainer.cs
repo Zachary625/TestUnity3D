@@ -6,7 +6,7 @@ namespace Assets.src.GUI.BigListView
 {
 	public class BigListViewItemContainer : MonoBehaviour {
 
-		public int itemIndex;
+		public int itemIndex = -1;
 
 		public int LayoutPriority;
 
