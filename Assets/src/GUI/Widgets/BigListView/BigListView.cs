@@ -192,20 +192,21 @@ namespace Assets.src.GUI.BigListView
 				if (displayItem) {
 					if (minDisplayItemIndex < 0) {
 						minDisplayItemIndex = itemIndex;
+					} else {
+						minDisplayItemIndex = Mathf.Min (minDisplayItemIndex, itemIndex);
 					}
-				} else {
-					if (minDisplayItemIndex >= 0) {
-						maxDisplayItemIndex = itemIndex - 1;
+					if (maxDisplayItemIndex < 0) {
+						maxDisplayItemIndex = itemIndex;
+					} else {
+						maxDisplayItemIndex = Mathf.Max (maxDisplayItemIndex, itemIndex);
 					}
-				}
-				if (minDisplayItemIndex >= 0 && maxDisplayItemIndex >= 0) {
-					break;
+
 				}
 			}
 
-			Debug.Log (" @ BigListView._updateItems(): [" + minDisplayItemIndex + ", " + maxDisplayItemIndex + "]");
+//			Debug.Log (" @ BigListView._updateItems(): [" + minDisplayItemIndex + ", " + maxDisplayItemIndex + "]");
 
-			bool[] cacheStatus = new bool[2 * this._itemCacheSize + maxDisplayItemIndex - minDisplayItemIndex + 1];
+			bool[] cacheStatus = new bool[2 * this._itemCacheSize + (maxDisplayItemIndex - minDisplayItemIndex) + 1];
 
 			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
 				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
@@ -213,7 +214,7 @@ namespace Assets.src.GUI.BigListView
 					BigListViewItemContainer itemContainer = itemContainerGameObject.GetComponent<BigListViewItemContainer> ();
 					if (itemContainer.itemIndex < minDisplayItemIndex - this._itemCacheSize || itemContainer.itemIndex > maxDisplayItemIndex + this._itemCacheSize) {
 						this._freeItemContainer (itemContainerGameObject);
-						Debug.Log (" @ BigListView._free(" + itemContainer.itemIndex + ")");
+//						Debug.Log (" @ BigListView._free(" + itemContainer.itemIndex + ")");
 					} else {
 						cacheStatus [itemContainer.itemIndex - (minDisplayItemIndex - this._itemCacheSize)] = true;
 					}
@@ -224,7 +225,7 @@ namespace Assets.src.GUI.BigListView
 				if (itemIndex >= 0 && itemIndex <= this.items - 1 && !cacheStatus [itemIndex - (minDisplayItemIndex - this._itemCacheSize)]) {
 					GameObject itemContainerGameObject = this._allocItemContainer ();
 					BigListViewItemContainer itemContainer = itemContainerGameObject.GetComponent<BigListViewItemContainer> ();
-					Debug.Log (" @ BigListView._alloc(" + itemIndex + "): prev: " + itemContainer.itemIndex);
+//					Debug.Log (" @ BigListView._alloc(" + itemIndex + "): prev: " + itemContainer.itemIndex);
 					itemContainer.itemIndex = itemIndex;
 					this.bigListViewDelegate.GetItem (itemContainerGameObject, itemIndex);
 				}
@@ -332,9 +333,8 @@ namespace Assets.src.GUI.BigListView
 		}
 
 		public void OnScroll() {
-			Debug.Log (" @ BigListView.OnScroll(): " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
-			this.Invoke ("_updateItems", 0);
-			//			this._updateItems();
+//			Debug.Log (" @ BigListView.OnScroll(): " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
+			this._updateItems();
 		}
 	}
 
