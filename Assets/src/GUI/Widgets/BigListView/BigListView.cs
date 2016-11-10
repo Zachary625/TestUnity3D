@@ -258,13 +258,12 @@ namespace Assets.src.GUI.BigListView
 				}
 			}
 
-			Debug.Log (" @ BigListView._isItemInDisplaySegment(" + index + ")\nitem: " + itemHead + " -> " + itemTail + "\nsegment: " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
+//			Debug.Log (" @ BigListView._isItemInDisplaySegment(" + index + "): " + result + "\nitem: " + itemHead + " -> " + itemTail + "\nsegment: " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
 
 			return result;
 		}
 
 		public void OnDrag(PointerEventData data) {
-			this._updateItems();
 		}
 
 		public void UpdateItems() {
@@ -324,6 +323,12 @@ namespace Assets.src.GUI.BigListView
 
 			contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
 			contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
+		}
+
+		public void OnScroll() {
+			Debug.Log (" @ BigListView.OnScroll(): " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
+			this.Invoke ("_updateItems", 0);
+			//			this._updateItems();
 		}
 	}
 
