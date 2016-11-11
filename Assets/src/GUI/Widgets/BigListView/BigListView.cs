@@ -181,6 +181,23 @@ namespace Assets.src.GUI.BigListView
 			}
 		}
 
+		private void _clearItemContainers () {
+			this._itemPositionList.Clear ();
+			this._itemSizeList.Clear ();
+
+			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
+				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
+				this._freeItemContainer (itemContainerGameObject);
+			}
+			this._contentPanel.transform.DetachChildren ();
+			while (this._itemContainerCache.Count != 0) {
+				GameObject itemContainer = this._itemContainerCache [0];
+				this._itemContainerCache.RemoveAt (0);
+				Destroy (itemContainer);
+			}
+
+		}
+
 		private void _updateItems() {
 			// TODO
 			int minDisplayItemIndex = -1;
@@ -271,30 +288,16 @@ namespace Assets.src.GUI.BigListView
 		}
 
 		public void OnDrag(PointerEventData data) {
+			
 		}
 
+
 		public void UpdateItems() {
+			this._clearItemContainers ();
+
 			if (this.bigListViewDelegate == null) {
-				for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
-					GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-					this._freeItemContainer (itemContainerGameObject);
-				}
-
+				this._items = 0;
 				return;
-			}
-
-			this._itemPositionList.Clear ();
-			this._itemSizeList.Clear ();
-
-			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
-				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-				this._freeItemContainer (itemContainerGameObject);
-			}
-			this._contentPanel.transform.DetachChildren ();
-			while (this._itemContainerCache.Count != 0) {
-				GameObject itemContainer = this._itemContainerCache [0];
-				this._itemContainerCache.RemoveAt (0);
-				Destroy (itemContainer);
 			}
 
 			this._items = this.bigListViewDelegate.GetItems ();

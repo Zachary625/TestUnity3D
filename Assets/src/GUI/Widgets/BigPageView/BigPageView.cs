@@ -181,6 +181,20 @@ namespace Assets.src.GUI.BigPageView
 			}
 		}
 
+		private void _clearPageContainers () {
+			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
+				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
+				this._freePageContainer (itemContainerGameObject);
+			}
+			this._contentPanel.transform.DetachChildren ();
+			while (this._pageContainerCache.Count != 0) {
+				GameObject pageContainer = this._pageContainerCache [0];
+				this._pageContainerCache.RemoveAt (0);
+				Destroy (pageContainer);
+			}
+
+		}
+
 		private void _updatePages() {
 			// TODO
 //			Debug.Log(" @ BigPageView._updatePages(): " + this._pageIndex);
@@ -346,15 +360,12 @@ namespace Assets.src.GUI.BigPageView
 		}
 
 		public void UpdatePages() {
+			this._clearPageContainers ();
 			if (this._bigPageViewDelegate == null) {
-				for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
-					GameObject pageContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
-					this._freePageContainer (pageContainerGameObject);
-				}
-
 				return;
 			}
 
+			this._clearPageContainers ();
 			this._pages = this._bigPageViewDelegate.GetPages ();
 			if (this._pageIndex >= this._pages && this._pages > 0) {
 				int prevPageIndex = this._pageIndex;
