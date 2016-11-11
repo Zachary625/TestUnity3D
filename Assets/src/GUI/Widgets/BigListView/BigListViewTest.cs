@@ -9,19 +9,31 @@ namespace Assets.src.GUI.BigListView
 		public Font font;
 
 		private int _itemNum = 100;
+		private Vector2 _itemSize;
 
 		public InputField UpdateItemNumInputField;
 
 		// Use this for initialization
 		void Start () {
 			BigListView bigListView = this.GetComponent<BigListView> ();
-
+			switch (bigListView.direction) {
+			case BigListView.Direction.Horizontal:
+				{
+					this._itemSize = new Vector2 (300, 50);
+					break;
+				}
+			case BigListView.Direction.Vertical:
+				{
+					this._itemSize = new Vector2 (300, 50);
+					break;
+				}
+			}
 			bigListView.bigListViewDelegate = this;
 		}
 
 		// Update is called once per frame
 		void Update () {
-
+			
 		}
 
 		public int GetItems() {
@@ -58,7 +70,7 @@ namespace Assets.src.GUI.BigListView
 		}
 
 		public Vector2 GetItemSize(int itemIndex) {
-			return new Vector2 (400, 40);
+			return this._itemSize;
 		}
 
 		public void UpdateItemNum() {
