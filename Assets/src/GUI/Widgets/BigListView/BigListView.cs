@@ -11,7 +11,6 @@ namespace Assets.src.GUI.BigListView
 	public class BigListView : MonoBehaviour, IDragHandler {
 		public enum Direction
 		{
-			None,
 			Vertical,
 			Horizontal,
 		}
