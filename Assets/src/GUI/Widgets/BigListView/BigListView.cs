@@ -204,6 +204,7 @@ namespace Assets.src.GUI.BigListView
 				}
 			}
 
+//			Debug.Log (" @ BigListView._updateItems(): " + this._displaySegmentHead + " -> " + this._displaySegmentTail);
 //			Debug.Log (" @ BigListView._updateItems(): [" + minDisplayItemIndex + ", " + maxDisplayItemIndex + "]");
 
 			bool[] cacheStatus = new bool[2 * this._itemCacheSize + (maxDisplayItemIndex - minDisplayItemIndex) + 1];
@@ -283,6 +284,9 @@ namespace Assets.src.GUI.BigListView
 				return;
 			}
 
+			this._itemPositionList.Clear ();
+			this._itemSizeList.Clear ();
+
 			for (int childIndex = 0; childIndex < this._contentPanel.transform.childCount; childIndex++) {
 				GameObject itemContainerGameObject = this._contentPanel.transform.GetChild (childIndex).gameObject;
 				this._freeItemContainer (itemContainerGameObject);
@@ -296,11 +300,11 @@ namespace Assets.src.GUI.BigListView
 
 			this._items = this.bigListViewDelegate.GetItems ();
 
-			this._updateContentPanelRect ();
+			this._updateContentLayoutData ();
 			this._updateItems();
 		}
 
-		private void _updateContentPanelRect() {
+		private void _updateContentLayoutData() {
 			RectTransform bigPageViewRectTransform = this.GetComponent<RectTransform>();
 			float listViewWidth = bigPageViewRectTransform.rect.width;
 			float listViewHeight = bigPageViewRectTransform.rect.height;
@@ -334,13 +338,20 @@ namespace Assets.src.GUI.BigListView
 				}					
 			}
 
-			Debug.Log(" @ BigListView._updateContentPanelRect(): contentSize: " + contentWidth + " * " + contentHeight);
+			Debug.Log(" @ BigListView._updateContentLayoutData(): contentSize: " + contentWidth + " * " + contentHeight);
+
+			Vector3 contentLocalPosition = contentRectTransform.localPosition;
 
 			contentRectTransform.anchorMin = new Vector2(0, 1);
 			contentRectTransform.anchorMax = new Vector2(0, 1);
 
 			contentRectTransform.offsetMin = new Vector2(0, -contentHeight);
 			contentRectTransform.offsetMax = new Vector2 (contentWidth, 0);
+
+			contentLocalPosition.x = Mathf.Max (contentLocalPosition.x, -contentWidth + listViewWidth);
+			contentLocalPosition.y = Mathf.Min (contentLocalPosition.y, contentHeight - listViewHeight);
+
+			contentRectTransform.localPosition = contentLocalPosition;
 		}
 
 		public void OnScroll() {

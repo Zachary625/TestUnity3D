@@ -25,12 +25,12 @@ namespace Assets.src.GUI.BigListView
 		}
 
 		public int GetItems() {
-			Debug.Log (" @ BigListViewTest.GetItems()");
+			Debug.Log (" @ BigListViewTest.GetItems(): " + this._itemNum);
 			return this._itemNum;			
 		}
 
 		public void GetItem(GameObject itemContainer, int itemIndex) {
-			Debug.Log (" @ BigListViewTest.GetItem(" + itemIndex + ")");
+//			Debug.Log (" @ BigListViewTest.GetItem(" + itemIndex + ")");
 			Transform itemContentTransform = itemContainer.transform.Find ("ItemContent");
 			if (!itemContentTransform) {
 				GameObject itemContent = new GameObject ();
