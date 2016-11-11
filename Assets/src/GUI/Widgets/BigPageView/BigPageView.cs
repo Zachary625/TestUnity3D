@@ -239,7 +239,7 @@ namespace Assets.src.GUI.BigPageView
 			return Mathf.Clamp( Mathf.RoundToInt(this._normalizedPosition * (this.pages - 1)), 0, this.pages - 1);
 		}
 
-		public void jumpToPage(int pageIndex) {
+		public void JumpToPage(int pageIndex) {
 			if (this.pages < 1) {
 				return;
 			}
@@ -374,7 +374,10 @@ namespace Assets.src.GUI.BigPageView
 					this.pageIndexChangeHandler(this.gameObject, new BigPageViewEventArgs (prevPageIndex, this._pageIndex));
 				}
 			}
+
  
+			this._updateContentPanelRect ();
+			this._normalizedPosition = this._pageIndexToNormalizedPosition (this._pageIndex);
 			this._updatePages();
 		}
 
