@@ -1,6 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/src/GUI/Widgets/BigPageView/BigPageViewTest.cs">
+    <Files>
+      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageViewTest.cs" Line="76" Column="3" />
+      <File FileName="Assets/src/GUI/Widgets/BigPageView/BigPageView.cs" Line="389" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
