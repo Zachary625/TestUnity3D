@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 namespace Assets.src.GUI.PageView {
 	public class PageViewTest : MonoBehaviour {
+		public InputField pageIndexInputField;
+
+		public Font font;
 
 		// Use this for initialization
 		void Start () {
@@ -12,11 +15,12 @@ namespace Assets.src.GUI.PageView {
 				int pages = 10;
 
 				for(int pageIndex = 0; pageIndex < pages; pageIndex++) {
-					GameObject content = new GameObject ();
-					RectTransform contentRT = content.AddComponent<RectTransform> ();
-					Image contentImage = content.AddComponent<Image> ();
+					GameObject pageContent = new GameObject ();
+					pageContent.name = "PageContent";
+					RectTransform contentRT = pageContent.AddComponent<RectTransform> ();
+					Text contentText = pageContent.AddComponent<Text> ();
 
-					pageView.addPage (content);
+					pageView.addPage (pageContent);
 
 					contentRT.anchorMin = Vector2.zero;
 					contentRT.anchorMax = Vector2.one;
@@ -24,7 +28,11 @@ namespace Assets.src.GUI.PageView {
 					contentRT.offsetMin = Vector2.zero;
 					contentRT.offsetMax = Vector2.zero;
 
-					contentImage.color = (pageIndex % 2 == 0) ? Color.red : Color.yellow;
+					contentText.alignment = TextAnchor.MiddleCenter;
+					contentText.fontSize = 30;
+					contentText.color = Color.red;
+					contentText.text = "PageIndex: " + pageIndex;
+					contentText.font = this.font;
 
 				}
 			}
@@ -51,6 +59,15 @@ namespace Assets.src.GUI.PageView {
 		void Update () {
 
 		}
+
+		public void ScrollToPage() {
+			this.GetComponent<PageView> () .ScrollToPage(System.Int32.Parse(this.pageIndexInputField.text));
+		}
+
+		public void JumpToPage() {
+			this.GetComponent<PageView> () .JumpToPage(System.Int32.Parse(this.pageIndexInputField.text));
+		}
+
 	}
 }
 

@@ -119,11 +119,12 @@ namespace Assets.src.GUI.PageView
 			}
 		}
 
+		void Awake() {
+			this._contentPanel = this.transform.Find("Viewport/Content").gameObject;
+		}
 
 		// Use this for initialization
 		void Start () {
-			this._contentPanel = this.GetComponent<ScrollRect>().content.gameObject;
-
 			bool hasVertical = this._contentPanel.GetComponent<VerticalLayoutGroup> () != null;
 			bool hasHorizontal = this._contentPanel.GetComponent<HorizontalLayoutGroup> () != null;
 
